@@ -1,0 +1,1517 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>CO | P3_单周期CPU设计 | LambYang's Blog</title><meta name="author" content="LambYang"><meta name="copyright" content="LambYang"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="思考题  上面我们介绍了通过 FSM 理解单周期 CPU 的基本方法。请大家指出单周期 CPU 所用到的模块中，哪些发挥状态存储功能，哪些发挥状态转移功能。  状态存储：GRF，IFU 状态转移：Controller，ALU  现在我们的模块中 IM 使用 ROM， DM 使用 RAM， GRF 使用 Register，这种做法合理吗？ 请给出分析，若有改进意见也请一并给出。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CO | P3_单周期CPU设计">
+<meta property="og:url" content="https://lamby-yang.github.io/2024/03/03/CO-P3-%E5%8D%95%E5%91%A8%E6%9C%9FCPU%E8%AE%BE%E8%AE%A1/index.html">
+<meta property="og:site_name" content="LambYang&#39;s Blog">
+<meta property="og:description" content="思考题  上面我们介绍了通过 FSM 理解单周期 CPU 的基本方法。请大家指出单周期 CPU 所用到的模块中，哪些发挥状态存储功能，哪些发挥状态转移功能。  状态存储：GRF，IFU 状态转移：Controller，ALU  现在我们的模块中 IM 使用 ROM， DM 使用 RAM， GRF 使用 Register，这种做法合理吗？ 请给出分析，若有改进意见也请一并给出。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2024/01/31/wW7A1cKSo6v5xGa.jpg">
+<meta property="article:published_time" content="2024-03-03T08:05:00.000Z">
+<meta property="article:modified_time" content="2024-03-03T08:10:17.467Z">
+<meta property="article:author" content="LambYang">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2024/01/31/wW7A1cKSo6v5xGa.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://lamby-yang.github.io/2024/03/03/CO-P3-%E5%8D%95%E5%91%A8%E6%9C%9FCPU%E8%AE%BE%E8%AE%A1/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":100,"languages":{"author":"作者: LambYang","link":"链接: ","source":"来源: LambYang's Blog","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'CO | P3_单周期CPU设计',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-03-03 16:10:17'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+        if (t === 'dark') activateDarkMode()
+        else if (t === 'light') activateLightMode()
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 7.0.0"><link href="https://cdn.bootcss.com/KaTeX/0.11.1/katex.min.css" rel="stylesheet" /></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://s2.loli.net/2024/01/30/nmgXWGCZhYzcVLP.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">10</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://s2.loli.net/2024/01/31/wW7A1cKSo6v5xGa.jpg')"><nav id="nav"><span id="blog-info"><a href="/" title="LambYang's Blog"><img class="site-icon" src="https://s2.loli.net/2024/01/30/nmgXWGCZhYzcVLP.jpg"/><span class="site-name">LambYang's Blog</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">CO | P3_单周期CPU设计</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-03-03T08:05:00.000Z" title="发表于 2024-03-03 16:05:00">2024-03-03</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-03-03T08:10:17.467Z" title="更新于 2024-03-03 16:10:17">2024-03-03</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">3.8k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>14分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="CO | P3_单周期CPU设计"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="思考题">思考题</h2>
+<ol type="1">
+<li><p>上面我们介绍了通过 FSM 理解单周期 CPU
+的基本方法。请大家指出单周期 CPU
+所用到的模块中，哪些发挥状态存储功能，哪些发挥状态转移功能。</p>
+<blockquote>
+<p>状态存储：GRF，IFU</p>
+<p>状态转移：Controller，ALU</p>
+</blockquote></li>
+<li><p>现在我们的模块中 IM 使用 ROM， DM 使用 RAM， GRF 使用
+Register，这种做法合理吗？ 请给出分析，若有改进意见也请一并给出。</p>
+<blockquote>
+<p>合理</p>
+<p>ROM是只读的存储器，在IM模块，我们需要将存储的程序代码读取出来，而不需要修改程序代码的值。使用ROM不容易造成数据的丢失，系统更稳定
+更安全。</p>
+<p>RAM是随机存储器，DM需要寄存器可读、可写，且具有大量内存，RAM正具有这些特点</p>
+<p>Register寄存器，是高速存储设备，访问数据的速度最快，性能好，在GRF模块使用Register正合适</p>
+</blockquote></li>
+<li><p>在上述提示的模块之外，你是否在实际实现时设计了其他的模块？如果是的话，请给出介绍和设计的思路。</p>
+<blockquote>
+<p>Splitter，SrcBSrc；（详细设计见下方草稿）</p>
+<p>Spliiter用于将Instr（32位指令）分解，输出op，funct，offset等各个部分的指令</p>
+<p>SrcBSrc用于选择需要进行ALU操作的数，是从RD2读取的数据
+还是扩展后的立即数</p>
+</blockquote></li>
+<li><p>事实上，实现 <code>nop</code>
+空指令，我们并不需要将它加入控制信号真值表，为什么？</p>
+<blockquote>
+<p><code>nop</code>指令是<code>0x00000000</code>，在程序中只会进行pc=pc+4的操作，对电路中的其他部件都没有影响，所以不需要修改其他东西的值</p>
+</blockquote></li>
+<li><p>阅读 Pre 的 <a
+target="_blank" rel="noopener" href="http://cscore.buaa.edu.cn/tutorial/mips/mips-6/mips6-1/">“MIPS
+指令集及汇编语言”</a>
+一节中给出的测试样例，评价其强度（可从各个指令的覆盖情况，单一指令各种行为的覆盖情况等方面分析），并指出具体的不足之处。</p>
+<blockquote>
+<ol type="1">
+<li><code>ori</code>模块没有测试其立即数的无符号位扩展功能，建议在第三行加上<code>ori $a4,$a0,0xffff</code>
+得到的结果应该是<code>0xffff</code></li>
+<li><code>beq</code>模块没有实现向前跳转的功能</li>
+<li>数量太少，覆盖的地址不够</li>
+</ol>
+</blockquote>
+<blockquote>
+<p>该节中的测试样例：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ori $a0, $0, 123</span><br><span class="line">ori $a1, $a0, 456</span><br><span class="line">lui $a2, 123            # 符号位为 0</span><br><span class="line">lui $a3, 0xffff         # 符号位为 1</span><br><span class="line">ori $a3, $a3, 0xffff    # $a3 = -1</span><br><span class="line">add $s0, $a0, $a2      # 正正</span><br><span class="line">add $s1, $a0, $a3      # 正负</span><br><span class="line">add $s2, $a3, $a3      # 负负</span><br><span class="line">ori $t0, $0, 0x0000</span><br><span class="line">sw $a0, 0($t0)</span><br><span class="line">sw $a1, 4($t0)</span><br><span class="line">sw $a2, 8($t0)</span><br><span class="line">sw $a3, 12($t0)</span><br><span class="line">sw $s0, 16($t0)</span><br><span class="line">sw $s1, 20($t0)</span><br><span class="line">sw $s2, 24($t0)</span><br><span class="line">lw $a0, 0($t0)</span><br><span class="line">lw $a1, 12($t0)</span><br><span class="line">sw $a0, 28($t0)</span><br><span class="line">sw $a1, 32($t0)</span><br><span class="line">ori $a0, $0, 1</span><br><span class="line">ori $a1, $0, 2</span><br><span class="line">ori $a2, $0, 1</span><br><span class="line">beq $a0, $a1, loop1     # 不相等</span><br><span class="line">beq $a0, $a2, loop2     # 相等</span><br><span class="line">loop1:sw $a0, 36($t0)</span><br><span class="line">loop2:sw $a1, 40($t0)</span><br></pre></td></tr></table></figure>
+</blockquote></li>
+</ol>
+<h2 id="设计要求">设计要求</h2>
+<ul>
+<li><p>处理器为 32 位单周期处理器，应支持的指令集为：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">add, sub, ori, lw, sw, beq, lui, nop</span><br></pre></td></tr></table></figure>
+<p>，其中：</p>
+<ul>
+<li><code>nop</code> 为空指令，机器码
+<code>0x00000000</code>，不进行任何有效行为（修改寄存器等）。</li>
+<li><code>add, sub</code> 按无符号加减法处理（不考虑溢出）。</li>
+</ul></li>
+<li><p>需要采用<strong>模块化</strong>和<strong>层次化</strong>设计。顶层有效的驱动信号要求包括且仅包括<strong>异步复位信号
+reset</strong>（clk 请使用内置时钟模块）。</p></li>
+</ul>
+<h2 id="设计草稿模块规格">设计草稿（模块规格）</h2>
+<p>模块规格设计包含了 CPU
+各个模块的<strong>端口说明</strong>与<strong>功能定义</strong>。一个好的模块规格可以让其他人快速理解该模块的功能并加以实现。这就相当于一份
+CPU 重要部件的“说明书”，需着重设计。</p>
+<h3 id="ifu取指令单元">IFU（取指令单元）</h3>
+<h5 id="pc程序计数器">PC（程序计数器）</h5>
+<ul>
+<li>PC
+用寄存器实现，应具有<strong>异步复位</strong>功能，复位值为起始地址。</li>
+<li><strong>起始地址：0x00003000。</strong></li>
+<li>地址范围：0x00003000 ~ 0x00006FFF。</li>
+</ul>
+<h5 id="im指令存储器">IM（指令存储器）</h5>
+<ul>
+<li>IM 用 ROM 实现，容量为 4096 × 32bit。</li>
+<li>ROM 内部的起始地址是从 0 开始的，即 ROM 的 0 位置存储的是 PC 为
+0x00003000 的指令，每条指令是一个 32bit 常数。</li>
+<li>经过以上分析，不难发现 ROM 实际地址宽度仅需 <strong>12
+位</strong>，请使用恰当的方法将 PC 中储存的地址同 IM 联系起来。</li>
+</ul>
+<h4 id="电路外观">电路外观：</h4>
+<p><img src="D:\study\[05]2023_Au\BUAA_CO\Note\P3_Picture\image-20231028202458214.png" alt="image-20231028202458214" style="zoom:50%;" /></p>
+<h4 id="电路内部">电路内部：</h4>
+<figure>
+<img
+src="D:\study%5B05%5D2023_Au\BUAA_CO\Note\P3_Picture\image-20231031111506999.png"
+alt="image-20231031111506999" />
+<figcaption aria-hidden="true">image-20231031111506999</figcaption>
+</figure>
+<h4 id="端口说明">端口说明：</h4>
+<table>
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 5%" />
+<col style="width: 77%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>信号名</th>
+<th>方向</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>clk</td>
+<td>I</td>
+<td>时钟信号</td>
+</tr>
+<tr class="even">
+<td>reset</td>
+<td>I</td>
+<td>异步复位信号，将32个寄存器中的值全部清零 <br />1：复位<br />
+0：无效</td>
+</tr>
+<tr class="odd">
+<td>Zero</td>
+<td>I</td>
+<td>ALU输出端是否为零，用以判断是否符合跳转条件<br />0：不跳转<br />1：跳转</td>
+</tr>
+<tr class="even">
+<td>Branch</td>
+<td>I</td>
+<td>是否是跳转指令<br />0：不是跳转指令<br />1：是跳转指令</td>
+</tr>
+<tr class="odd">
+<td>SignImm[31:0]</td>
+<td>I</td>
+<td>16位立即数
+位扩展成32位后的结果，用于beq跳转，表示要跳转到本条指令后的第SignImm条指令</td>
+</tr>
+<tr class="even">
+<td>Instr[31:0]</td>
+<td>O</td>
+<td>32位指令</td>
+</tr>
+<tr class="odd">
+<td>pc[31:0]</td>
+<td>O</td>
+<td>输出pc寄存器存储的地址</td>
+</tr>
+</tbody>
+</table>
+<h4 id="功能定义">功能定义：</h4>
+<table>
+<colgroup>
+<col style="width: 5%" />
+<col style="width: 13%" />
+<col style="width: 81%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>序号</th>
+<th>功能名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>异步复位</td>
+<td>reset信号有效时，将寄存器存储的数值置为0x00003000</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>跳转判断</td>
+<td>Zero和Branch同时为1时，PCSrc的值为1，表明是跳转指令且符合跳转条件，跳转到指定语句位置；其他情况下，PCSrc的值为0，进入下一条语句，不进行跳转。</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>取指令</td>
+<td>将pc存储的地址，减0x00003000（因为ROM 内部的起始地址是从 0
+开始的），再取2-13位（0x00003000~0x00006fff）的内容，作为ROM的输入端</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>PC地址计算</td>
+<td>常规情况下pc=pc+4；<br />当需要beq跳转（Branch&amp;Zero==1）时pc=pc+4+
+sign_extend(offset)</td>
+</tr>
+</tbody>
+</table>
+<h3
+id="grf通用寄存器组也称为寄存器文件寄存器堆">GRF（通用寄存器组，也称为寄存器文件、寄存器堆）</h3>
+<ul>
+<li>用具有写使能的寄存器实现，寄存器总数为 32
+个，应具有<strong>异步复位</strong>功能。</li>
+<li><strong>0 号寄存器</strong>的值始终保持为
+0。其他寄存器<strong>初始值（复位后）均为
+0</strong>，无需专门设置。</li>
+</ul>
+<h4 id="电路外观-1">电路外观：</h4>
+<p><img src="D:\study\[05]2023_Au\BUAA_CO\Note\P3_Picture\image-20231028233035802.png" alt="image-20231028233035802" style="zoom:50%;" /></p>
+<h4 id="电路内部-1">电路内部：</h4>
+<figure>
+<img src="D:\study%5B05%5D2023_Au\BUAA_CO\Note\P3_Picture\GRF.png"
+alt="GRF" />
+<figcaption aria-hidden="true">GRF</figcaption>
+</figure>
+<h4 id="端口说明-1">端口说明：</h4>
+<table>
+<colgroup>
+<col style="width: 12%" />
+<col style="width: 5%" />
+<col style="width: 82%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>信号名</th>
+<th>方向</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>clk</td>
+<td>I</td>
+<td>时钟信号</td>
+</tr>
+<tr class="even">
+<td>reset</td>
+<td>I</td>
+<td>异步复位信号，将32个寄存器中的值全部清零<br />1：复位<br />0：无效</td>
+</tr>
+<tr class="odd">
+<td>WE</td>
+<td>I</td>
+<td>写入使能信号<br />1：可以向GRF中写入数据<br />0：不能向GRF中写入数据</td>
+</tr>
+<tr class="even">
+<td>A1[4:0]</td>
+<td>I</td>
+<td>5位地址输入信号，指定32个寄存器中的一个，将其中存储的数据读到RD1</td>
+</tr>
+<tr class="odd">
+<td>A2[4:0]</td>
+<td>I</td>
+<td>5位地址输入信号，指定32个寄存器中的一个，将其中存储的数据读到RD2</td>
+</tr>
+<tr class="even">
+<td>A3[4:0]</td>
+<td>I</td>
+<td>5位地址输入信号，指定32个寄存器中的一个作为写入目标寄存器</td>
+</tr>
+<tr class="odd">
+<td>WD3[31:0]</td>
+<td>I</td>
+<td>32位数据输入信号</td>
+</tr>
+<tr class="even">
+<td>RD1</td>
+<td>O</td>
+<td>输出A1指定的寄存器中的32位数据</td>
+</tr>
+<tr class="odd">
+<td>RD2</td>
+<td>O</td>
+<td>输出A2指定的寄存器中的32位数据</td>
+</tr>
+</tbody>
+</table>
+<h4 id="功能定义-1">功能定义：</h4>
+<table>
+<colgroup>
+<col style="width: 5%" />
+<col style="width: 11%" />
+<col style="width: 83%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>序号</th>
+<th>功能名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>复位</td>
+<td>reset信号有效时，所有寄存器存储的数值清零，其行为与logisim自带部件register的reset接口完全相同</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>读数据</td>
+<td>读出A1，A2地址对应寄存器中所存储的数据到RD1，RD2</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>写数据</td>
+<td>当WE 有效且时钟上升沿来临时，将 WD 写入A3 所对应的寄存器中</td>
+</tr>
+</tbody>
+</table>
+<h3 id="alu算术逻辑单元">ALU（算术逻辑单元）</h3>
+<ul>
+<li>提供 32 位加、减、或运算及大小比较功能。</li>
+<li>加减法按无符号处理（不考虑溢出）。</li>
+</ul>
+<h4 id="端口说明-2">端口说明：</h4>
+<table>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 5%" />
+<col style="width: 75%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>信号名</th>
+<th>方向</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>SrcA[31:0]</td>
+<td>I</td>
+<td>32位输入，用于运算的数A</td>
+</tr>
+<tr class="even">
+<td>SrcB[31:0]</td>
+<td>I</td>
+<td>32位输入，用于运算的数B</td>
+</tr>
+<tr class="odd">
+<td>ALUCtr[3:0]</td>
+<td>I</td>
+<td>4位输入，控制ALU中要进行什么运算<br />0000：加法<br />0001：减法<br />0010：或<br />0011：左移16位（lui）<br />0100：与<br />0101：左移shamt位（sll）</td>
+</tr>
+<tr class="even">
+<td>ALUResult[31:0]</td>
+<td>O</td>
+<td>32位输出，进行ALU处理之后得到的结果</td>
+</tr>
+<tr class="odd">
+<td>Zero</td>
+<td>O</td>
+<td>输出Ans是否为0<br />0：Ans不为0<br />1：Ans为0</td>
+</tr>
+</tbody>
+</table>
+<h4 id="功能定义-2">功能定义：</h4>
+<table>
+<colgroup>
+<col style="width: 4%" />
+<col style="width: 21%" />
+<col style="width: 73%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>序号</th>
+<th>功能名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>加法</td>
+<td>当ALUCtr等于0000时，将SrcA的值和SrcB的值相加，将结果输出到ALUResult</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>减法</td>
+<td>当ALUCtr等于0001时，用SrcA的值减去SrcB的值，将结果输出到ALUResult</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>或</td>
+<td>当ALUCtr等于0010时，将SrcA的值和SrcB的值或运算，将结果输出到ALUResult</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>左移16位（lui）</td>
+<td>当ALUCtr等于0011时，将SrcB的值左移16位，将结果输出到ALUResult</td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td>与</td>
+<td>当ALUCtr等于0100时，将SrcA的值和SrcB的值做与运算，将结果输出到ALUResult</td>
+</tr>
+<tr class="even">
+<td>6</td>
+<td>左移shamt位（sll）</td>
+<td>当ALUCtr等于0011时，将SrcB的值左移shamt位，将结果输出到ALUResult</td>
+</tr>
+</tbody>
+</table>
+<h3 id="dm数据存储器">DM（数据存储器）</h3>
+<ul>
+<li>使用 RAM 实现，容量为 3072 ×
+32bit，应具有<strong>异步复位</strong>功能，复位值为 0x00000000。</li>
+<li><strong>起始地址：0x00000000</strong>。</li>
+<li>地址范围：0x00000000 ~ 0x00002FFF。</li>
+<li>RAM 应使用双端口模式，即设置 RAM 的 <strong>Data Interface</strong>
+属性为 <strong>Separate load and store ports</strong>。</li>
+</ul>
+<h4 id="端口说明-3">端口说明：</h4>
+<table>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 5%" />
+<col style="width: 75%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>信号名</th>
+<th>方向</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>clk</td>
+<td>I</td>
+<td>时钟信号</td>
+</tr>
+<tr class="even">
+<td>reset</td>
+<td>I</td>
+<td>异步复位信号，将RAM 中的值全部清零<br />1：复位 <br />0：无效</td>
+</tr>
+<tr class="odd">
+<td>ALUResult[31:0]</td>
+<td>I</td>
+<td>32位输入，ALU模块计算后的输出值<br />可能是RAM写入地址（取第2-13位），也可能是A3要写入的值（ReadData）</td>
+</tr>
+<tr class="even">
+<td>WriteData[31:0]</td>
+<td>I</td>
+<td>32位输入，从寄存器中取出来的值，并准备存到RAM中</td>
+</tr>
+<tr class="odd">
+<td>MemToReg</td>
+<td>I</td>
+<td>控制WD3输入的是从DM（数据存储器）读取的值还是ALU运算结果<br />0：ALUResult<br />1：ReadData<br />x：不需要向写寄存器写入</td>
+</tr>
+<tr class="even">
+<td>MemWrite</td>
+<td>I</td>
+<td>决定DM是写入数据还是读取数据<br />1：从DM中读取数据<br />0：向DM中写入数据</td>
+</tr>
+<tr class="odd">
+<td>ReadData[31:0]</td>
+<td>O</td>
+<td>32位输出，表示要写入A3的值<br />可能是ALUResult，也可能是从RAM中读取出来的值</td>
+</tr>
+</tbody>
+</table>
+<h4 id="功能定义-3">功能定义：</h4>
+<table>
+<colgroup>
+<col style="width: 5%" />
+<col style="width: 11%" />
+<col style="width: 83%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>序号</th>
+<th>功能名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>异步复位</td>
+<td>异步复位，将RAM 中的值全部清零</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>存储数据</td>
+<td>将WriteData写入 RAM中ALUResult的2-6位地址</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>读取数据</td>
+<td>将RAM中
+ALUResult的2-6位地址存储的数据，读取出来，作为ReadData输出</td>
+</tr>
+</tbody>
+</table>
+<h3 id="ext扩展单元">EXT（扩展单元）</h3>
+<ul>
+<li>可以使用 Logisim 内置的 Bit Extender。</li>
+</ul>
+<h4 id="端口说明-4">端口说明：</h4>
+<table>
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 5%" />
+<col style="width: 78%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>信号名</th>
+<th>方向</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>offset[15:0]</td>
+<td>I</td>
+<td>输入16位的立即数</td>
+</tr>
+<tr class="even">
+<td>ExtOp</td>
+<td>I</td>
+<td>将16位的立即数扩展成32位时，选用有符号扩展还是无符号扩展<br />0：无符号扩展<br />1：有符号扩展<br />x：无效</td>
+</tr>
+<tr class="odd">
+<td>SignImm</td>
+<td>O</td>
+<td>输出扩展后的32位数据</td>
+</tr>
+</tbody>
+</table>
+<h4 id="功能定义-4">功能定义：</h4>
+<table>
+<colgroup>
+<col style="width: 5%" />
+<col style="width: 11%" />
+<col style="width: 82%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>序号</th>
+<th>功能名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>位扩展</td>
+<td>将16位的立即数扩展成32位，分符号扩展和无符号扩展两种情况</td>
+</tr>
+</tbody>
+</table>
+<h3 id="splitter分线器">Splitter（分线器）</h3>
+<ul>
+<li>将每条指令的 32 位二进制码分成分别表示寄存器号、funct
+码等的二进制码段</li>
+</ul>
+<h4 id="端口说明-5">端口说明：</h4>
+<table>
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 5%" />
+<col style="width: 78%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>信号名</th>
+<th>方向</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Instr[31:0]</td>
+<td>I</td>
+<td>输入 从IM中读取的32位指令</td>
+</tr>
+<tr class="even">
+<td>RegDst</td>
+<td>I</td>
+<td>控制给A3传递的地址是Rt还是Rd<br />0：传Rt的地址（//I类指令）<br />1：传Rd的地址（//R类指令）<br />x：不需要向写寄存器写入</td>
+</tr>
+<tr class="odd">
+<td>A1[4:0]</td>
+<td>O</td>
+<td>5位地址输出信号，对应GRF中的A1</td>
+</tr>
+<tr class="even">
+<td>A2[4:0]</td>
+<td>O</td>
+<td>5位地址输出信号，对应GRF中的A2</td>
+</tr>
+<tr class="odd">
+<td>A3[4:0]</td>
+<td>O</td>
+<td>5位地址输出信号，对应GRF中的A3</td>
+</tr>
+<tr class="even">
+<td>offset[15:0]</td>
+<td>O</td>
+<td>16位输出，输出立即数</td>
+</tr>
+<tr class="odd">
+<td>op[5:0]</td>
+<td>O</td>
+<td>6位操作数，对应op</td>
+</tr>
+<tr class="even">
+<td>funct[5:0]</td>
+<td>O</td>
+<td>6位输出，对应funct</td>
+</tr>
+<tr class="odd">
+<td>Shamt[4:0]</td>
+<td>O</td>
+<td>5位输出，对应ALU模块的Shamt</td>
+</tr>
+</tbody>
+</table>
+<h4 id="功能定义-5">功能定义：</h4>
+<table>
+<thead>
+<tr class="header">
+<th>序号</th>
+<th>功能名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>分线</td>
+<td>输入Instr，输出不同的值作为输出</td>
+</tr>
+</tbody>
+</table>
+<h3 id="controller控制器">Controller（控制器）</h3>
+<ul>
+<li>使用与或门阵列构造控制信号的具体方法见后文叙述。</li>
+<li>也可以通过其它方式构造控制信号，同学们可以自行探索。</li>
+</ul>
+<p><strong>课下测试要求的功能：</strong></p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 10%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 13%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>funct（5-0）</th>
+<th>100000</th>
+<th>100010</th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>op（31-26）</td>
+<td>000000</td>
+<td>000000</td>
+<td>001101</td>
+<td>100011</td>
+<td>101011</td>
+<td>000100</td>
+<td>001111</td>
+</tr>
+<tr class="even">
+<td>和逻辑↑/或逻辑↓</td>
+<td>add</td>
+<td>sub</td>
+<td>ori</td>
+<td>lw</td>
+<td>sw</td>
+<td>beq</td>
+<td>lui</td>
+</tr>
+<tr class="odd">
+<td>RegDst</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>x</td>
+<td>x</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<td>ALUSrc</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr class="odd">
+<td>MemToReg</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>x</td>
+<td>x</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<td>RegWrite</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr class="odd">
+<td>MemWrite</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<td>Branch</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<td>ExtOp</td>
+<td>x</td>
+<td>x</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<td>ALUCtr</td>
+<td>add(0000)</td>
+<td>sub(0001)</td>
+<td>or(0010)</td>
+<td>add(0000)</td>
+<td>add(0000)</td>
+<td>sub(0001)</td>
+<td>shift(0011)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>我自己补充的一些功能：</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th>funct(5-0)</th>
+<th>100100</th>
+<th>100101</th>
+<th>000000</th>
+<th>x</th>
+<th>001000</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>op(31-26)</td>
+<td>000000</td>
+<td>000000</td>
+<td>000000</td>
+<td>000011</td>
+<td>000000</td>
+</tr>
+<tr class="even">
+<td>和逻辑↑/或逻辑↓</td>
+<td>and</td>
+<td>or</td>
+<td>sll</td>
+<td>jal</td>
+<td>jr</td>
+</tr>
+<tr class="odd">
+<td>RegDst</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<td>ALUSrc</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<td>MemToReg</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<td>RegWrite</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<td>MemWrite</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<td>Branch</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<td>ExtOp</td>
+<td>x（0）</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<td>JRSrc</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr class="odd">
+<td>JalSrc</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<td>ALUCtr</td>
+<td>and(0100)</td>
+<td>or(0010)</td>
+<td>sll(0101)</td>
+<td>0</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>sll</strong>、<strong>jal</strong>、<strong>j</strong>、<strong>jr</strong>
+，以及存取指令
+<strong>sb</strong>、<strong>sh</strong>、<strong>lb</strong>、<strong>lh</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th>funct（5-0）</th>
+<th></th>
+<th></th>
+<th>x</th>
+<th>x</th>
+<th>110001</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>op（31-26）</td>
+<td>000011</td>
+<td></td>
+<td>100000</td>
+<td>101000</td>
+<td>000000</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>和逻辑↑/或逻辑↓</td>
+<td>jal</td>
+<td>j</td>
+<td>lb</td>
+<td>sb</td>
+<td>bezal</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>RegDst</td>
+<td></td>
+<td></td>
+<td>0</td>
+<td>0</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>ALUSrc</td>
+<td></td>
+<td></td>
+<td>1</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>MemToReg</td>
+<td></td>
+<td></td>
+<td>1</td>
+<td>0</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>RegWrite</td>
+<td></td>
+<td></td>
+<td>1</td>
+<td>0</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>MemWrite</td>
+<td></td>
+<td></td>
+<td>0</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>Branch</td>
+<td></td>
+<td></td>
+<td>0</td>
+<td>0</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>ExtOp</td>
+<td></td>
+<td></td>
+<td>1</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>JRSrc</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<td>Byte</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<td>ALUCtr</td>
+<td></td>
+<td></td>
+<td>0</td>
+<td>0</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><strong>课上增加的功能</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th>funct（5-0）</th>
+<th>100100</th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>op（31-26）</td>
+<td>000000</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>和逻辑↑/或逻辑↓</td>
+<td>and</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>RegDst</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>ALUSrc</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>MemToReg</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>RegWrite</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>MemWrite</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>Branch</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>ExtOp</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>JRSrc</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<td>ALUCtr</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h4 id="端口说明-6">端口说明：</h4>
+<table>
+<colgroup>
+<col style="width: 13%" />
+<col style="width: 5%" />
+<col style="width: 81%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">信号名</th>
+<th>方向</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">funct[5:0]</td>
+<td>I</td>
+<td>（5-0）</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">op[5:0]</td>
+<td>I</td>
+<td>（31-26）</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">RegDst</td>
+<td>O</td>
+<td>控制给A3传递的地址是Rt还是Rd<br />0：传Rt的地址（//I类指令）<br />1：传Rd的地址（//R类指令）<br />x：不需要向写寄存器写入</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ALUSrc</td>
+<td>O</td>
+<td>控制ALU的SrcB端口输入，是RD2的值还是立即数<br />0：RD2的值<br />1：立即数</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">MemToReg</td>
+<td>O</td>
+<td>WD3输入的是从DM（数据存储器）读取的值还是ALU运算结果<br />0：ALUResult<br />1：ReadData<br />x：不需要向写寄存器写入</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">RegWrite</td>
+<td>O</td>
+<td>GRF的使能信号<br />1：需要向GRF中写入数据<br />0：不需要向GRF中写入数据</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">MemWrite</td>
+<td>O</td>
+<td>决定DM是写入数据还是读取数据<br />1：从DM中读取数据<br />0：向DM中写入数据，或不需要读取（即除了lw等指令，都是0）</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Branch</td>
+<td>O</td>
+<td>是否是跳转语句<br />0：不是跳转语句<br />1：是跳转语句</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ExtOp</td>
+<td>O</td>
+<td>将16位的立即数扩展成32位时，选用有符号扩展还是无符号扩展<br />0：无符号扩展<br />1：有符号扩展</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ALU[3:0]</td>
+<td>O</td>
+<td>ALU需要进行的计算操作类型<br />0000：加法<br />0001：减法<br />0010：或<br />0011：左移16位<br />0100：与</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">JRSrc</td>
+<td>O</td>
+<td>是不是<code>jr</code>指令</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">JSrc</td>
+<td>O</td>
+<td>是不是<code>j</code>或<code>jal</code>指令</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">JalSrc</td>
+<td>O</td>
+<td>是不是<code>jal</code>指令（是否需要给<code>ra</code>存值）</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Is_Byte</td>
+<td>O</td>
+<td>是不是<code>lb/sb</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="功能定义-6">功能定义：</h4>
+<table>
+<thead>
+<tr class="header">
+<th>序号</th>
+<th>功能名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>判断操作类型</td>
+<td>根据op和funct确定指令操作类型</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>产生控制型号</td>
+<td>根据操作类型，生成控制信号</td>
+</tr>
+</tbody>
+</table>
+<h2 id="关于mips指令编码表">关于MIPS指令编码表</h2>
+<p>（一般情况下，有例外。如sllv，rs，rt反着的，在ALU中把RD2（A2）左移RD1（A1）位即可）</p>
+<table>
+<thead>
+<tr class="header">
+<th>31……26</th>
+<th>25……21</th>
+<th>20……16</th>
+<th>15……11</th>
+<th>10……6</th>
+<th>5……0</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>op</td>
+<td>rs（A1）</td>
+<td>rt（A2）</td>
+<td>rd（A3）</td>
+<td>shamt</td>
+<td>funct</td>
+</tr>
+<tr class="even">
+<td></td>
+<td>base（0）</td>
+<td></td>
+<td>offset</td>
+<td>offset</td>
+<td>offset</td>
+</tr>
+</tbody>
+</table>
+<p>要加上 v2.0 raw</p>
+<blockquote>
+<p>V0：课下要求版本，加sll</p>
+<p>V1：加了j，jal，jr</p>
+<p>V2：加了j，jal，jr，lb，sb</p>
+</blockquote>
+<h3 id="p3第二次上机">P3第二次上机</h3>
+<h4 id="第一题">第一题：</h4>
+<p><strong>orz</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th>31……26</th>
+<th>25……21</th>
+<th>20……16</th>
+<th>15……0</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>op<br />101010</td>
+<td>rs</td>
+<td>rt</td>
+<td>immediate</td>
+</tr>
+</tbody>
+</table>
+<p><span class="math display">\[
+\begin{flalign}
+&amp;if \quad GPR[rs]_0 = 0\quad then \\
+&amp;\qquad GPR[rt]← GPR[rs]\ OR\ sign\_extend(immediate)\\
+&amp;else\\
+&amp;\qquad  GPR[rt]← GPR[rs]\\
+&amp;Endif
+\end{flalign}
+\]</span></p>
+<h4 id="第二题">第二题：</h4>
+<p><strong>bno</strong></p>
+<p>Branch if Not</p>
+<table>
+<thead>
+<tr class="header">
+<th>31……26</th>
+<th>25……21</th>
+<th>20……16</th>
+<th>15……0</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>op <br />101111</td>
+<td>rs</td>
+<td>rt</td>
+<td>immediate</td>
+</tr>
+</tbody>
+</table>
+<p><span class="math display">\[
+\begin{flalign}
+&amp;a← GPR[rs]_{30}+GPR[rs]_{29}+...+GPR[rs]_0\\
+&amp;b← GPR[rt]_{30}+GPR[rt]_{29}+...+GPR[rt]_0\\
+&amp;temp←a_4||a+b_4||b\\
+&amp;if\ (temp_4=temp_5) \\
+&amp;\qquad PC←PC+4+sign\_extend(immediate)\\
+&amp;else\\
+&amp;\qquad PC←PC+4\\
+&amp;Endif
+\end{flalign}
+\]</span></p>
+<h4 id="第三题">第三题：</h4>
+<p><strong>lob</strong></p>
+<p>Load Or Byte</p>
+<p>$ Addr ← GPR[base] + sign_ext(offset)\ memword← memory[Addr] byte ←
+Addr_{1..0}\ GPR[rt] ← zero_ext(memword_{7+8<em>byte..8</em>byte})$</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://lamby-yang.github.io">LambYang</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://lamby-yang.github.io/2024/03/03/CO-P3-%E5%8D%95%E5%91%A8%E6%9C%9FCPU%E8%AE%BE%E8%AE%A1/">https://lamby-yang.github.io/2024/03/03/CO-P3-%E5%8D%95%E5%91%A8%E6%9C%9FCPU%E8%AE%BE%E8%AE%A1/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://lamby-yang.github.io" target="_blank">LambYang's Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="https://s2.loli.net/2024/01/31/wW7A1cKSo6v5xGa.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2024/03/03/CO-P4-%E5%8D%95%E5%91%A8%E6%9C%9FCPU%E8%AE%BE%E8%AE%A1-Verilog%E5%AE%9E%E7%8E%B0/" title="CO | P4_单周期CPU设计_Verilog实现"><img class="cover" src="https://s2.loli.net/2024/01/31/wW7A1cKSo6v5xGa.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">CO | P4_单周期CPU设计_Verilog实现</div></div></a></div><div class="next-post pull-right"><a href="/2024/03/03/CO-P2-MIPS/" title="CO | P2_MIPS"><img class="cover" src="https://s2.loli.net/2024/01/31/wW7A1cKSo6v5xGa.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">CO | P2_MIPS</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://s2.loli.net/2024/01/30/nmgXWGCZhYzcVLP.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">LambYang</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">10</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/lamby-yang"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/lamby-yang" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%9D%E8%80%83%E9%A2%98"><span class="toc-number">1.</span> <span class="toc-text">思考题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%BE%E8%AE%A1%E8%A6%81%E6%B1%82"><span class="toc-number">2.</span> <span class="toc-text">设计要求</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%BE%E8%AE%A1%E8%8D%89%E7%A8%BF%E6%A8%A1%E5%9D%97%E8%A7%84%E6%A0%BC"><span class="toc-number">3.</span> <span class="toc-text">设计草稿（模块规格）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ifu%E5%8F%96%E6%8C%87%E4%BB%A4%E5%8D%95%E5%85%83"><span class="toc-number">3.1.</span> <span class="toc-text">IFU（取指令单元）</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#pc%E7%A8%8B%E5%BA%8F%E8%AE%A1%E6%95%B0%E5%99%A8"><span class="toc-number">3.1.0.1.</span> <span class="toc-text">PC（程序计数器）</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#im%E6%8C%87%E4%BB%A4%E5%AD%98%E5%82%A8%E5%99%A8"><span class="toc-number">3.1.0.2.</span> <span class="toc-text">IM（指令存储器）</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%94%B5%E8%B7%AF%E5%A4%96%E8%A7%82"><span class="toc-number">3.1.1.</span> <span class="toc-text">电路外观：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%94%B5%E8%B7%AF%E5%86%85%E9%83%A8"><span class="toc-number">3.1.2.</span> <span class="toc-text">电路内部：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AB%AF%E5%8F%A3%E8%AF%B4%E6%98%8E"><span class="toc-number">3.1.3.</span> <span class="toc-text">端口说明：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8A%9F%E8%83%BD%E5%AE%9A%E4%B9%89"><span class="toc-number">3.1.4.</span> <span class="toc-text">功能定义：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#grf%E9%80%9A%E7%94%A8%E5%AF%84%E5%AD%98%E5%99%A8%E7%BB%84%E4%B9%9F%E7%A7%B0%E4%B8%BA%E5%AF%84%E5%AD%98%E5%99%A8%E6%96%87%E4%BB%B6%E5%AF%84%E5%AD%98%E5%99%A8%E5%A0%86"><span class="toc-number">3.2.</span> <span class="toc-text">GRF（通用寄存器组，也称为寄存器文件、寄存器堆）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%94%B5%E8%B7%AF%E5%A4%96%E8%A7%82-1"><span class="toc-number">3.2.1.</span> <span class="toc-text">电路外观：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%94%B5%E8%B7%AF%E5%86%85%E9%83%A8-1"><span class="toc-number">3.2.2.</span> <span class="toc-text">电路内部：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AB%AF%E5%8F%A3%E8%AF%B4%E6%98%8E-1"><span class="toc-number">3.2.3.</span> <span class="toc-text">端口说明：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8A%9F%E8%83%BD%E5%AE%9A%E4%B9%89-1"><span class="toc-number">3.2.4.</span> <span class="toc-text">功能定义：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#alu%E7%AE%97%E6%9C%AF%E9%80%BB%E8%BE%91%E5%8D%95%E5%85%83"><span class="toc-number">3.3.</span> <span class="toc-text">ALU（算术逻辑单元）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AB%AF%E5%8F%A3%E8%AF%B4%E6%98%8E-2"><span class="toc-number">3.3.1.</span> <span class="toc-text">端口说明：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8A%9F%E8%83%BD%E5%AE%9A%E4%B9%89-2"><span class="toc-number">3.3.2.</span> <span class="toc-text">功能定义：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#dm%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8%E5%99%A8"><span class="toc-number">3.4.</span> <span class="toc-text">DM（数据存储器）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AB%AF%E5%8F%A3%E8%AF%B4%E6%98%8E-3"><span class="toc-number">3.4.1.</span> <span class="toc-text">端口说明：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8A%9F%E8%83%BD%E5%AE%9A%E4%B9%89-3"><span class="toc-number">3.4.2.</span> <span class="toc-text">功能定义：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ext%E6%89%A9%E5%B1%95%E5%8D%95%E5%85%83"><span class="toc-number">3.5.</span> <span class="toc-text">EXT（扩展单元）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AB%AF%E5%8F%A3%E8%AF%B4%E6%98%8E-4"><span class="toc-number">3.5.1.</span> <span class="toc-text">端口说明：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8A%9F%E8%83%BD%E5%AE%9A%E4%B9%89-4"><span class="toc-number">3.5.2.</span> <span class="toc-text">功能定义：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#splitter%E5%88%86%E7%BA%BF%E5%99%A8"><span class="toc-number">3.6.</span> <span class="toc-text">Splitter（分线器）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AB%AF%E5%8F%A3%E8%AF%B4%E6%98%8E-5"><span class="toc-number">3.6.1.</span> <span class="toc-text">端口说明：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8A%9F%E8%83%BD%E5%AE%9A%E4%B9%89-5"><span class="toc-number">3.6.2.</span> <span class="toc-text">功能定义：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#controller%E6%8E%A7%E5%88%B6%E5%99%A8"><span class="toc-number">3.7.</span> <span class="toc-text">Controller（控制器）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AB%AF%E5%8F%A3%E8%AF%B4%E6%98%8E-6"><span class="toc-number">3.7.1.</span> <span class="toc-text">端口说明：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8A%9F%E8%83%BD%E5%AE%9A%E4%B9%89-6"><span class="toc-number">3.7.2.</span> <span class="toc-text">功能定义：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B3%E4%BA%8Emips%E6%8C%87%E4%BB%A4%E7%BC%96%E7%A0%81%E8%A1%A8"><span class="toc-number">4.</span> <span class="toc-text">关于MIPS指令编码表</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#p3%E7%AC%AC%E4%BA%8C%E6%AC%A1%E4%B8%8A%E6%9C%BA"><span class="toc-number">4.1.</span> <span class="toc-text">P3第二次上机</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E9%A2%98"><span class="toc-number">4.1.1.</span> <span class="toc-text">第一题：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E9%A2%98"><span class="toc-number">4.1.2.</span> <span class="toc-text">第二题：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E9%A2%98"><span class="toc-number">4.1.3.</span> <span class="toc-text">第三题：</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2024/03/03/CO-P7-%E6%B5%81%E6%B0%B4%E7%BA%BFCPU%E4%B8%AD%E6%96%AD%E5%BC%82%E5%B8%B8%E5%93%8D%E5%BA%94/" title="CO | P7_流水线CPU中断异常响应"><img src="https://s2.loli.net/2024/01/31/P7V1MryqcCTbkRN.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="CO | P7_流水线CPU中断异常响应"/></a><div class="content"><a class="title" href="/2024/03/03/CO-P7-%E6%B5%81%E6%B0%B4%E7%BA%BFCPU%E4%B8%AD%E6%96%AD%E5%BC%82%E5%B8%B8%E5%93%8D%E5%BA%94/" title="CO | P7_流水线CPU中断异常响应">CO | P7_流水线CPU中断异常响应</a><time datetime="2024-03-03T08:07:28.000Z" title="发表于 2024-03-03 16:07:28">2024-03-03</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/03/03/CO-P6-%E6%B5%81%E6%B0%B4%E7%BA%BFCPU%E5%8A%9F%E8%83%BD%E6%89%A9%E5%B1%95/" title="CO | P6_流水线CPU功能扩展"><img src="https://s2.loli.net/2024/01/31/7nCiOMNaZv1IQxl.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="CO | P6_流水线CPU功能扩展"/></a><div class="content"><a class="title" href="/2024/03/03/CO-P6-%E6%B5%81%E6%B0%B4%E7%BA%BFCPU%E5%8A%9F%E8%83%BD%E6%89%A9%E5%B1%95/" title="CO | P6_流水线CPU功能扩展">CO | P6_流水线CPU功能扩展</a><time datetime="2024-03-03T08:06:31.000Z" title="发表于 2024-03-03 16:06:31">2024-03-03</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/03/03/CO-P5-%E6%B5%81%E6%B0%B4%E7%BA%BFCPU%E8%AE%BE%E8%AE%A1/" title="CO | P5_流水线CPU设计"><img src="https://s2.loli.net/2024/01/31/4akh7yHM59pbGnj.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="CO | P5_流水线CPU设计"/></a><div class="content"><a class="title" href="/2024/03/03/CO-P5-%E6%B5%81%E6%B0%B4%E7%BA%BFCPU%E8%AE%BE%E8%AE%A1/" title="CO | P5_流水线CPU设计">CO | P5_流水线CPU设计</a><time datetime="2024-03-03T08:06:07.000Z" title="发表于 2024-03-03 16:06:07">2024-03-03</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/03/03/CO-P4-%E5%8D%95%E5%91%A8%E6%9C%9FCPU%E8%AE%BE%E8%AE%A1-Verilog%E5%AE%9E%E7%8E%B0/" title="CO | P4_单周期CPU设计_Verilog实现"><img src="https://s2.loli.net/2024/01/31/wW7A1cKSo6v5xGa.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="CO | P4_单周期CPU设计_Verilog实现"/></a><div class="content"><a class="title" href="/2024/03/03/CO-P4-%E5%8D%95%E5%91%A8%E6%9C%9FCPU%E8%AE%BE%E8%AE%A1-Verilog%E5%AE%9E%E7%8E%B0/" title="CO | P4_单周期CPU设计_Verilog实现">CO | P4_单周期CPU设计_Verilog实现</a><time datetime="2024-03-03T08:05:41.000Z" title="发表于 2024-03-03 16:05:41">2024-03-03</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/03/03/CO-P3-%E5%8D%95%E5%91%A8%E6%9C%9FCPU%E8%AE%BE%E8%AE%A1/" title="CO | P3_单周期CPU设计"><img src="https://s2.loli.net/2024/01/31/wW7A1cKSo6v5xGa.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="CO | P3_单周期CPU设计"/></a><div class="content"><a class="title" href="/2024/03/03/CO-P3-%E5%8D%95%E5%91%A8%E6%9C%9FCPU%E8%AE%BE%E8%AE%A1/" title="CO | P3_单周期CPU设计">CO | P3_单周期CPU设计</a><time datetime="2024-03-03T08:05:00.000Z" title="发表于 2024-03-03 16:05:00">2024-03-03</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2023 - 2024 By LambYang</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">嘿！是小羊的博客！！</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"><script>if (!window.MathJax) {
+  window.MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      tags: 'ams'
+    },
+    chtml: {
+      scale: 1.1
+    },
+    options: {
+      renderActions: {
+        findScript: [10, doc => {
+          for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+            const display = !!node.type.match(/; *mode=display/)
+            const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+            const text = document.createTextNode('')
+            node.parentNode.replaceChild(text, node)
+            math.start = {node: text, delim: '', n: 0}
+            math.end = {node: text, delim: '', n: 0}
+            doc.math.push(math)
+          }
+        }, '']
+      }
+    }
+  }
+  
+  const script = document.createElement('script')
+  script.src = 'https://cdn.jsdelivr.net/npm/mathjax/es5/tex-mml-chtml.min.js'
+  script.id = 'MathJax-script'
+  script.async = true
+  document.head.appendChild(script)
+} else {
+  MathJax.startup.document.state(0)
+  MathJax.texReset()
+  MathJax.typesetPromise()
+}</script></div><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-nest.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
