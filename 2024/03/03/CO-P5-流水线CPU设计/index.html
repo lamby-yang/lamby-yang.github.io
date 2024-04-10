@@ -1,16 +1,16 @@
-<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>CO | P5_流水线CPU设计 | LambYang's Blog</title><meta name="author" content="LambYang"><meta name="copyright" content="LambYang"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="推荐一些学长的博客  P5 课下学习 — 流水线 CPU 设计 (1) - 北航计算机组成原理 | Test Blog &#x3D; FlyingLandlord&#39;s Blog P5 课上测试 1&amp;2 - 北航计算机组成原理 | Test Blog &#x3D; FlyingLandlord&#39;s Blog BUAA-CO-Lab| P5 流水线 CPU-lite | ROIFE BLOG">
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>CO | P5_流水线CPU设计 | LambYang's Blog</title><meta name="author" content="LambYang"><meta name="copyright" content="LambYang"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="推荐一些学长的博客  P5 课下学习 — 流水线 CPU 设计 (1) - 北航计算机组成原理 | Test Blog &#x3D; FlyingLandlord’s Blog P5 课上测试 1&amp;2 - 北航计算机组成原理 | Test Blog &#x3D; FlyingLandlord’s Blog BUAA-CO-Lab| P5 流水线 CPU-lite | ROIFE BLOG 计算机组成实验 P">
 <meta property="og:type" content="article">
 <meta property="og:title" content="CO | P5_流水线CPU设计">
 <meta property="og:url" content="https://lamby-yang.github.io/2024/03/03/CO-P5-%E6%B5%81%E6%B0%B4%E7%BA%BFCPU%E8%AE%BE%E8%AE%A1/index.html">
 <meta property="og:site_name" content="LambYang&#39;s Blog">
-<meta property="og:description" content="推荐一些学长的博客  P5 课下学习 — 流水线 CPU 设计 (1) - 北航计算机组成原理 | Test Blog &#x3D; FlyingLandlord&#39;s Blog P5 课上测试 1&amp;2 - 北航计算机组成原理 | Test Blog &#x3D; FlyingLandlord&#39;s Blog BUAA-CO-Lab| P5 流水线 CPU-lite | ROIFE BLOG">
+<meta property="og:description" content="推荐一些学长的博客  P5 课下学习 — 流水线 CPU 设计 (1) - 北航计算机组成原理 | Test Blog &#x3D; FlyingLandlord’s Blog P5 课上测试 1&amp;2 - 北航计算机组成原理 | Test Blog &#x3D; FlyingLandlord’s Blog BUAA-CO-Lab| P5 流水线 CPU-lite | ROIFE BLOG 计算机组成实验 P">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://s2.loli.net/2024/01/31/7nCiOMNaZv1IQxl.jpg">
+<meta property="og:image" content="https://s2.loli.net/2024/01/31/P7V1MryqcCTbkRN.jpg">
 <meta property="article:published_time" content="2024-03-03T08:06:07.000Z">
 <meta property="article:modified_time" content="2024-03-24T05:30:46.274Z">
 <meta property="article:author" content="LambYang">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://s2.loli.net/2024/01/31/7nCiOMNaZv1IQxl.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://lamby-yang.github.io/2024/03/03/CO-P5-%E6%B5%81%E6%B0%B4%E7%BA%BFCPU%E8%AE%BE%E8%AE%A1/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+<meta name="twitter:image" content="https://s2.loli.net/2024/01/31/P7V1MryqcCTbkRN.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://lamby-yang.github.io/2024/03/03/CO-P5-%E6%B5%81%E6%B0%B4%E7%BA%BFCPU%E8%AE%BE%E8%AE%A1/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
   root: '/',
   algolia: undefined,
   localSearch: undefined,
@@ -152,25 +152,15 @@
         }
       }
       detectApple()
-    })(window)</script><meta name="generator" content="Hexo 7.0.0"><link href="https://cdn.bootcss.com/KaTeX/0.11.1/katex.min.css" rel="stylesheet" /></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://s2.loli.net/2024/01/30/nmgXWGCZhYzcVLP.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">11</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://s2.loli.net/2024/01/31/7nCiOMNaZv1IQxl.jpg')"><nav id="nav"><span id="blog-info"><a href="/" title="LambYang's Blog"><img class="site-icon" src="https://s2.loli.net/2024/01/30/nmgXWGCZhYzcVLP.jpg"/><span class="site-name">LambYang's Blog</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">CO | P5_流水线CPU设计</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-03-03T08:06:07.000Z" title="发表于 2024-03-03 16:06:07">2024-03-03</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-03-24T05:30:46.274Z" title="更新于 2024-03-24 13:30:46">2024-03-24</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">3.9k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>16分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="CO | P5_流水线CPU设计"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><blockquote>
+    })(window)</script><meta name="generator" content="Hexo 7.0.0"><link href="https://cdn.bootcss.com/KaTeX/0.11.1/katex.min.css" rel="stylesheet" /></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://s2.loli.net/2024/01/30/nmgXWGCZhYzcVLP.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">11</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://s2.loli.net/2024/01/31/P7V1MryqcCTbkRN.jpg')"><nav id="nav"><span id="blog-info"><a href="/" title="LambYang's Blog"><img class="site-icon" src="https://s2.loli.net/2024/01/30/nmgXWGCZhYzcVLP.jpg"/><span class="site-name">LambYang's Blog</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">CO | P5_流水线CPU设计</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-03-03T08:06:07.000Z" title="发表于 2024-03-03 16:06:07">2024-03-03</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-03-24T05:30:46.274Z" title="更新于 2024-03-24 13:30:46">2024-03-24</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">3.9k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>16分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="CO | P5_流水线CPU设计"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><blockquote>
 <p>推荐一些学长的博客</p>
 </blockquote>
-<p><a target="_blank" rel="noopener" href="https://flyinglandlord.github.io/2021/12/01/BUAA-CO-2021/P5/P5课下/">P5
-课下学习 — 流水线 CPU 设计 (1) - 北航计算机组成原理 | Test Blog =
-FlyingLandlord's Blog</a></p>
-<p><a target="_blank" rel="noopener" href="https://flyinglandlord.github.io/2021/12/02/BUAA-CO-2021/P5/P5课上1&amp;2/">P5
-课上测试 1&amp;2 - 北航计算机组成原理 | Test Blog = FlyingLandlord's
-Blog</a></p>
-<p><a target="_blank" rel="noopener" href="https://roife.github.io/posts/buaa-co-lab-p5/">BUAA-CO-Lab|
-P5 流水线 CPU-lite | ROIFE BLOG</a></p>
-<p><a target="_blank" rel="noopener" href="https://bluebean-cloud.github.io/2023/01/02/BUAA-CO-P5/">计算机组成实验
-P5 回顾|bluebean</a></p>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/cedr1c_wyc/article/details/121934083">【BUAA_CO_LAB】p5&amp;p6碎碎念_buaa
-p5-CSDN博客</a></p>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_51287862/article/details/121808807?utm_medium=distribute.pc_feed_404.none-task-blog-2~default~BlogCommendFromBaidu~Rate-8-121808807-blog-null.262%5Ev1%5Epc_404_mixedpudn&amp;depth_1-utm_source=distribute.pc_feed_404.none-task-blog-2~default~BlogCommendFromBaidu~Rate-8-121808807-blog-null.262%5Ev1%5Epc_404_mixedpud">P5
-用verilog描述流水线CPU的学习笔记和总结_设计与测试说明
-处理器为32位处理器。 处理器应支持的指令集为:{addu, subu,
-ori,_佛系甜胖妮的博客-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://flyinglandlord.github.io/2021/12/01/BUAA-CO-2021/P5/P5%E8%AF%BE%E4%B8%8B/">P5 课下学习 — 流水线 CPU 设计 (1) - 北航计算机组成原理 | Test Blog = FlyingLandlord’s Blog</a></p>
+<p><a target="_blank" rel="noopener" href="https://flyinglandlord.github.io/2021/12/02/BUAA-CO-2021/P5/P5%E8%AF%BE%E4%B8%8A1&amp;2/">P5 课上测试 1&amp;2 - 北航计算机组成原理 | Test Blog = FlyingLandlord’s Blog</a></p>
+<p><a target="_blank" rel="noopener" href="https://roife.github.io/posts/buaa-co-lab-p5/">BUAA-CO-Lab| P5 流水线 CPU-lite | ROIFE BLOG</a></p>
+<p><a target="_blank" rel="noopener" href="https://bluebean-cloud.github.io/2023/01/02/BUAA-CO-P5/">计算机组成实验 P5 回顾|bluebean</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/cedr1c_wyc/article/details/121934083">【BUAA_CO_LAB】p5&amp;p6碎碎念_buaa p5-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_51287862/article/details/121808807?utm_medium=distribute.pc_feed_404.none-task-blog-2~default~BlogCommendFromBaidu~Rate-8-121808807-blog-null.262%5Ev1%5Epc_404_mixedpudn&amp;depth_1-utm_source=distribute.pc_feed_404.none-task-blog-2~default~BlogCommendFromBaidu~Rate-8-121808807-blog-null.262%5Ev1%5Epc_404_mixedpud">P5 用verilog描述流水线CPU的学习笔记和总结_设计与测试说明 处理器为32位处理器。 处理器应支持的指令集为:{addu, subu, ori,_佛系甜胖妮的博客-CSDN博客</a></p>
 <h2 id="五段式指令流水线">五段式指令流水线</h2>
 <p>IF：取指令</p>
 <blockquote>
@@ -203,12 +193,9 @@ ori,_佛系甜胖妮的博客-CSDN博客</a></p>
 <blockquote>
 <p>GRF（在D级写过了，不用写了）</p>
 </blockquote>
-<p><code>add</code> 、<code>sub</code>
-等指令，需要经过所有的五个阶段才能完成整个指令的工作</p>
-<p><code>sw</code> 等指令，仅仅到达访存 <code>M</code>
-阶段就已经结束</p>
-<p><code>beq</code> 等指令，在执行 <code>D</code> 阶段完成
-<code>PC</code> 更新后，就不再有具体的工作了。</p>
+<p><code>add</code> 、<code>sub</code> 等指令，需要经过所有的五个阶段才能完成整个指令的工作</p>
+<p><code>sw</code> 等指令，仅仅到达访存 <code>M</code> 阶段就已经结束</p>
+<p><code>beq</code> 等指令，在执行 <code>D</code> 阶段完成 <code>PC</code> 更新后，就不再有具体的工作了。</p>
 <h2 id="模块设计">模块设计</h2>
 <blockquote>
 <p>命名格式：</p>
@@ -218,11 +205,11 @@ ori,_佛系甜胖妮的博客-CSDN博客</a></p>
 </blockquote>
 <p>因此我们首先要搞清楚的是每一级都需要什么数据，每一级又向后输出什么数据，然后只需要考虑每个层级里面的逻辑就行了</p>
 <h3 id="结构设计">结构设计</h3>
-<p><img src="study\05_2023_Au\BUAA_CO\shared\P5\p5_v1.png" alt="p5_v1" style="zoom:200%;"></p>
+<img src="study\05_2023_Au\BUAA_CO\shared\P5\p5_v1.png" alt="p5_v1" style="zoom:200%;">
 <blockquote>
 <p>我的流水线大致长这个样子</p>
 </blockquote>
-<h3 id="controller">Controller</h3>
+<h3 id="Controller">Controller</h3>
 <p>提一点点关于这个模块<code>j</code>跳转指令实现的建议，方便课上指令添加的操作</p>
 <blockquote>
 <p>直接在Controller模块里进行A3地址的选择</p>
@@ -232,13 +219,8 @@ ori,_佛系甜胖妮的博客-CSDN博客</a></p>
 <p>跳转控制信号</p>
 </blockquote>
 <figure class="highlight verilog"><table><tr><td class="code"><pre><span class="line"><span class="keyword">assign</span> D_Jump_addr    = jal | <span class="number">1&#x27;b0</span>;<span class="comment">//jump to instr_index</span></span><br><span class="line"><span class="keyword">assign</span> D_Jump_reg     = jr | <span class="number">1&#x27;b0</span>; <span class="comment">//jump to RD1</span></span><br><span class="line"><span class="keyword">assign</span> D_Jump_link    = jal | <span class="number">1&#x27;b0</span>;<span class="comment">//GPR[rd] &lt;- PC+8 (主要是用来选PC+8的)</span></span><br></pre></td></tr></table></figure>
-<h3 id="forwarding转发模块">Forwarding（转发模块）</h3>
-<p>转发模块要进行的转发是：<strong>M</strong> 级向 <strong>E</strong>
-级转发，<strong>M</strong> 级向 <strong>D</strong>
-级转发、<strong>W</strong> 级向 <strong>E</strong>
-级转发、<strong>W</strong> 级向 <strong>M</strong>
-级转发、<strong>W</strong> 级向 <strong>D</strong>
-级转发、以及寄存器堆的内部转发。</p>
+<h3 id="Forwarding（转发模块）">Forwarding（转发模块）</h3>
+<p>转发模块要进行的转发是：<strong>M</strong> 级向 <strong>E</strong> 级转发，<strong>M</strong> 级向 <strong>D</strong> 级转发、<strong>W</strong> 级向 <strong>E</strong> 级转发、<strong>W</strong> 级向 <strong>M</strong> 级转发、<strong>W</strong> 级向 <strong>D</strong> 级转发、以及寄存器堆的内部转发。</p>
 <blockquote>
 <p>延迟槽保证没有跳转指令，但可能用到上面的寄存器，也就是说jal后面一句不是b或者j指令，不需要E级往D级转发</p>
 </blockquote>
@@ -248,49 +230,37 @@ ori,_佛系甜胖妮的博客-CSDN博客</a></p>
 <h4 id="其他的转发模块">其他的转发模块</h4>
 <p>对于这部分的转发，我们可以列举每种转发对于的情况，来理解。</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">lw $s0,4($0) //阻塞+W给E转发</span><br><span class="line">lw $s1,4($s0)</span><br><span class="line"></span><br><span class="line">jal+下一句jr</span><br><span class="line"></span><br><span class="line">//M-&gt;E</span><br><span class="line">add $s0,$t0,$t1</span><br><span class="line">add $s1,$s0,$t0</span><br><span class="line">//(or) lw $s1,4($s0)</span><br><span class="line"></span><br><span class="line">//M-&gt;D</span><br><span class="line">add $s0,$t0,$t1</span><br><span class="line">beq $s0,$t0,...</span><br><span class="line"></span><br><span class="line">//W-&gt;M</span><br><span class="line">lw $s0,4($0)</span><br><span class="line">sw $s0,8($0)</span><br><span class="line"></span><br><span class="line">//W-&gt;E</span><br><span class="line">lw $s0,4($0)</span><br><span class="line">add $s1,$s0,$t0</span><br><span class="line">//(or) lw $s1,4($s0)转发+阻塞一周期</span><br><span class="line"></span><br><span class="line">//W-&gt;D</span><br><span class="line">lw $s0,4($0)</span><br><span class="line">beq $s0,$t0,...</span><br></pre></td></tr></table></figure>
-<p>转发是从每级的流水线寄存器后，转发到每个需要使用转发数据的零件前，相当于从W、M级向M、E、D级连线，画图方便理解：<img src="study\05_2023_Au\BUAA_CO\Note\P5_Picture\image-20231130171844360.png" alt="image-20231130171844360"></p>
+<p>转发是从每级的流水线寄存器后，转发到每个需要使用转发数据的零件前，相当于从W、M级向M、E、D级连线，画图方便理解：<img src="D:%5Cstudy%5C05_2023_Au%5CBUAA_CO%5CNote%5CP5_Picture%5Cimage-20231130171844360.png" alt="image-20231130171844360"></p>
 <p>我们用一个模块来做所有的转发操作，相当于接了很多条tunnel到每级使用的数据前后</p>
 <p>理解了转发的逻辑和方式之后，注意转发模块书写时的易错点</p>
 <blockquote>
-<ol type="1">
+<ol>
 <li>若对<code>0</code>寄存器操作，则不转发</li>
 <li>当<code>RegWrite==1</code>且<code>Tnew==1</code>时，若寄存器地址相等，则转发</li>
 <li>转发时M级的优先级在W级前，这样获得的数据是更新的数据</li>
 </ol>
 </blockquote>
 <figure class="highlight verilog"><table><tr><td class="code"><pre><span class="line"><span class="keyword">assign</span> D_RD1_FW = 	(D_A1 == <span class="number">5&#x27;b0</span>) ? <span class="number">32&#x27;h0000_0000</span> :</span><br><span class="line">					(D_A1 == M_A3)&amp;&amp;(M_RegWrite)&amp;&amp;(M_Tnew == <span class="number">0</span>) ? M_ALU_Result :</span><br><span class="line">					(D_A1 == W_A3)&amp;&amp;(W_RegWrite)&amp;&amp;(W_Tnew == <span class="number">0</span>) ? W_RegData : D_RD1 ;</span><br><span class="line"><span class="comment">//D_RD1_FW：D级的RD1经过转发后得到的值</span></span><br><span class="line"><span class="comment">//M_RegWrite：M级的写使能信号</span></span><br><span class="line"><span class="comment">//M_Tnew：M级Tnew的值</span></span><br><span class="line"><span class="comment">//M_ALU_Result：E级ALU_Result经过流水线寄存器后的结果</span></span><br><span class="line"><span class="comment">//W_RegData：要写入GRF的值</span></span><br></pre></td></tr></table></figure>
-<h4 id="tuse-和-tnew-的分析">Tuse 和 Tnew 的分析</h4>
-<p>T<sub>use</sub> 表示数据到了 D
-级之后还需要多少个周期要使用，每个指令的 T<sub>use</sub>
-是固定不变的。</p>
-<p>在 D 级使用：T<sub>use</sub>=0</p>
-<p>在 E 级使用：T<sub>use</sub>=1</p>
-<p>在 M 级使用：T<sub>use</sub>=2</p>
-<p>T<sub>new</sub>
-表示数据还有多长时间产生，会随着数据的流水动态的减少。</p>
+<h4 id="Tuse-和-Tnew-的分析">Tuse 和 Tnew 的分析</h4>
+<p>T~use~ 表示数据到了 D 级之后还需要多少个周期要使用，每个指令的 T~use~ 是固定不变的。</p>
+<p>在 D 级使用：T~use~=0</p>
+<p>在 E 级使用：T~use~=1</p>
+<p>在 M 级使用：T~use~=2</p>
+<p>T~new~ 表示数据还有多长时间产生，会随着数据的流水动态的减少。</p>
 <table>
-<colgroup>
-<col style="width: 6%">
-<col style="width: 17%">
-<col style="width: 17%">
-<col style="width: 12%">
-<col style="width: 21%">
-<col style="width: 12%">
-<col style="width: 12%">
-</colgroup>
 <thead>
-<tr class="header">
+<tr>
 <th>指令</th>
-<th>D_rs_T<sub>use</sub></th>
-<th>D_rt_T<sub>use</sub></th>
-<th>D_T<sub>new</sub></th>
-<th>E_T<sub>new</sub></th>
-<th>M_T<sub>new</sub></th>
-<th>W_T<sub>new</sub></th>
+<th>D_rs_T~use~</th>
+<th>D_rt_T~use~</th>
+<th>D_T~new~</th>
+<th>E_T~new~</th>
+<th>M_T~new~</th>
+<th>W_T~new~</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td>add</td>
 <td>1</td>
 <td>1</td>
@@ -299,7 +269,7 @@ ori,_佛系甜胖妮的博客-CSDN博客</a></p>
 <td>0</td>
 <td>0</td>
 </tr>
-<tr class="even">
+<tr>
 <td>sub</td>
 <td>1</td>
 <td>1</td>
@@ -308,7 +278,7 @@ ori,_佛系甜胖妮的博客-CSDN博客</a></p>
 <td>0</td>
 <td>0</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>ori</td>
 <td>1</td>
 <td>x</td>
@@ -317,7 +287,7 @@ ori,_佛系甜胖妮的博客-CSDN博客</a></p>
 <td>0</td>
 <td>0</td>
 </tr>
-<tr class="even">
+<tr>
 <td>lw</td>
 <td>1</td>
 <td>x</td>
@@ -326,7 +296,7 @@ ori,_佛系甜胖妮的博客-CSDN博客</a></p>
 <td>1</td>
 <td>0</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>sw</td>
 <td>1</td>
 <td>2</td>
@@ -335,7 +305,7 @@ ori,_佛系甜胖妮的博客-CSDN博客</a></p>
 <td>0</td>
 <td>0</td>
 </tr>
-<tr class="even">
+<tr>
 <td>beq</td>
 <td>0</td>
 <td>0</td>
@@ -344,7 +314,7 @@ ori,_佛系甜胖妮的博客-CSDN博客</a></p>
 <td>0</td>
 <td>0</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>lui</td>
 <td>x</td>
 <td>x</td>
@@ -353,7 +323,7 @@ ori,_佛系甜胖妮的博客-CSDN博客</a></p>
 <td>0</td>
 <td>0</td>
 </tr>
-<tr class="even">
+<tr>
 <td>jal</td>
 <td>x</td>
 <td>x</td>
@@ -362,7 +332,7 @@ ori,_佛系甜胖妮的博客-CSDN博客</a></p>
 <td>0</td>
 <td>0</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>jr</td>
 <td>0</td>
 <td>x</td>
@@ -371,7 +341,7 @@ ori,_佛系甜胖妮的博客-CSDN博客</a></p>
 <td>0</td>
 <td>0</td>
 </tr>
-<tr class="even">
+<tr>
 <td></td>
 <td></td>
 <td></td>
@@ -382,29 +352,22 @@ ori,_佛系甜胖妮的博客-CSDN博客</a></p>
 </tr>
 </tbody>
 </table>
-<figure>
-<img src="study\05_2023_Au\BUAA_CO\Note\P5_Picture\image-20231130173833463.png" alt="image-20231130173833463">
-<figcaption aria-hidden="true">image-20231130173833463</figcaption>
-</figure>
+<p><img src="D:%5Cstudy%5C05_2023_Au%5CBUAA_CO%5CNote%5CP5_Picture%5Cimage-20231130173833463.png" alt="image-20231130173833463"></p>
 <p>不管需不需要做阻塞操作，都可以转发</p>
 <blockquote>
-<p>T_use为：这条指令位于 D
-级的时候，再经过多少个时钟周期就必须要使用相应的数据。</p>
+<p>T_use为：这条指令位于 D 级的时候，再经过多少个时钟周期就必须要使用相应的数据。</p>
 <p>T_new为：位于某个流水级的某个指令，它经过多少个时钟周期可以算出结果并且存储到流水级寄存器里。</p>
-<p>当一个指令到达 D 级后，我们需要将它的 T_use 值与后面每一级的 T_new
-进行比较（当然还有 A 值的校验） T_use≥T_new 时，我们需要进行转发。
+<p>当一个指令到达 D 级后，我们需要将它的 T_use 值与后面每一级的 T_new 进行比较（当然还有 A 值的校验）<br>
+T_use≥T_new 时，我们需要进行转发。<br>
 T_use&lt;T_new 时，需要阻塞。</p>
 <p>我们的控制器需要产生的信号包括但不限于冻结信号，刷新信号，供给者选择器信号，需求者选择器信号等。</p>
 </blockquote>
 <h3 id="阻塞模块">阻塞模块</h3>
-<p>阻塞时，<strong>只可能在 D 级进行阻塞</strong>，阻塞控制器接受
-D，E，M
-级的指令输入，处理分析指令类别，并给他们赋上不同的<code>Tuse</code>和<code>Tnew</code>的值，然后用组合逻辑判断，如果<code>Tuse&lt;Tnew</code>就直接阻塞
-D 级，直到<code>Tuse=Tnew</code>时再继续执行</p>
+<p>阻塞时，<strong>只可能在 D 级进行阻塞</strong>，阻塞控制器接受 D，E，M 级的指令输入，处理分析指令类别，并给他们赋上不同的<code>Tuse</code>和<code>Tnew </code>的值，然后用组合逻辑判断，如果<code>Tuse&lt;Tnew </code>就直接阻塞 D 级，直到<code>Tuse=Tnew</code>时再继续执行</p>
 <p><strong>在D级阻塞时，将PC、F_D暂停（<code>RegWE</code>置0），将D_E清空。</strong></p>
 <p><strong>不用F级的指令，就把F_D_clear置1，同理</strong></p>
 <p>此模块在D级，要和E、M级的T_new比较，（W级都==0，不需要比较）</p>
-<p><figure class="highlight verilog"><table><tr><td class="code"><pre><span class="line"> 	<span class="keyword">wire</span> Stall_E_A1 =  	(D_A1 == <span class="number">0</span>) ? <span class="number">1&#x27;b0</span> :</span><br><span class="line"> 						(D_A1 == E_A3)&amp;&amp;(D_rs_Tuse &lt; E_Tnew)&amp;&amp;(E_RegWrite == <span class="number">1</span>) ? <span class="number">1&#x27;b1</span>: <span class="number">1&#x27;b0</span>;</span><br><span class="line">......</span><br><span class="line">	<span class="keyword">assign</span> Stall = Stall_E_A1 | Stall_E_A2 | Stall_M_A1 | Stall_M_A2 | <span class="number">1&#x27;b0</span>;</span><br><span class="line"><span class="comment">//Stall：需要阻塞</span></span><br></pre></td></tr></table></figure></p>
+ <figure class="highlight verilog"><table><tr><td class="code"><pre><span class="line"> 	<span class="keyword">wire</span> Stall_E_A1 =  	(D_A1 == <span class="number">0</span>) ? <span class="number">1&#x27;b0</span> :</span><br><span class="line"> 						(D_A1 == E_A3)&amp;&amp;(D_rs_Tuse &lt; E_Tnew)&amp;&amp;(E_RegWrite == <span class="number">1</span>) ? <span class="number">1&#x27;b1</span>: <span class="number">1&#x27;b0</span>;</span><br><span class="line">......</span><br><span class="line">	<span class="keyword">assign</span> Stall = Stall_E_A1 | Stall_E_A2 | Stall_M_A1 | Stall_M_A2 | <span class="number">1&#x27;b0</span>;</span><br><span class="line"><span class="comment">//Stall：需要阻塞</span></span><br></pre></td></tr></table></figure>
 <p>在D级进行阻塞的操作如下</p>
 <figure class="highlight verilog"><table><tr><td class="code"><pre><span class="line"><span class="keyword">assign</span> PC_RegWE  = !Stall;<span class="comment">//PC寄存器的使能信号</span></span><br><span class="line">   <span class="keyword">assign</span> F_D_RegWE = !Stall;<span class="comment">//F_D流水线寄存器的使能信号</span></span><br><span class="line">   <span class="keyword">assign</span> D_E_clear =  Stall;<span class="comment">//D_E寄存器清零</span></span><br></pre></td></tr></table></figure>
 <h2 id="测试指令">测试指令</h2>
@@ -420,11 +383,9 @@ D 级，直到<code>Tuse=Tnew</code>时再继续执行</p>
 <h3 id="添加指令">添加指令</h3>
 <h4 id="计算指令">计算指令</h4>
 <blockquote>
-<ol type="1">
-<li>改<code>D_Controller</code>，加入新指令的判断<code>wire new=...</code></li>
-<li>画<code>control表格和AT表格</code>，改<code>D_Controller</code>的
-<code>controller</code>如<code>regwrite等等等等</code>，<code>forward_control</code>
-，加入新指令的<code>AT</code>判断</li>
+<ol>
+<li>改<code>D_Controller</code>，加入新指令的判断<code>wire new=... </code></li>
+<li>画<code>control表格和AT表格</code>，改<code>D_Controller</code>的 <code>controller</code>如<code>regwrite等等等等</code>，<code>forward_control</code> ，加入新指令的<code>AT</code>判断</li>
 <li>改<code>E_ALUmo</code>模块的输出</li>
 </ol>
 </blockquote>
@@ -433,155 +394,156 @@ D 级，直到<code>Tuse=Tnew</code>时再继续执行</p>
 <p>这部分指令通常会以<code>I</code>和<code>I+1</code>的形式出现，建议去学习一下教程中机器码指令解释的内容</p>
 <p>跳转指令无非就是几种情况的组合，<strong>跳转地址b地址/jr地址</strong>，<strong>条件跳转/无条件跳转</strong>，<strong>条件link/无条件link</strong>（link地址选择），<strong>清空延迟槽</strong>。自己课下扩展搭出<code>Condition</code>信号，把这个信号传到需要的模块中，就可以实现<strong>条件</strong>跳转/link。</p>
 <blockquote>
-<ol type="1">
-<li><p>改<code>D_Controller</code>，加入新指令的判断<code>D_Is_New</code>和<code>regwrite等等等等</code></p></li>
-<li><p>画<code>AT表格</code>，改<code>D_Controller</code>的
-<code>forward_control</code> ，加入新指令的<code>AT</code>判断</p></li>
-<li><p>对于 <span class="math inline">\(GPR[rd]←PC+8\)</span>
-这一指令，将<code>D_Jump_link</code>置1，同时直接在<code>Controller</code>里选择<code>A3</code>地址</p>
+<ol>
+<li>
+<p>改<code>D_Controller</code>，加入新指令的判断<code>D_Is_New</code>和<code>regwrite等等等等</code></p>
+</li>
+<li>
+<p>画<code>AT表格</code>，改<code>D_Controller</code>的 <code>forward_control</code> ，加入新指令的<code>AT</code>判断</p>
+</li>
+<li>
+<p>对于  $GPR[rd]←PC+8$  这一指令，将<code>D_Jump_link</code>置1，同时直接在<code>Controller</code>里选择<code>A3</code>地址</p>
 <blockquote>
-<p>也可能是<code>D_Condition==1</code>，时将 <span class="math inline">\(GPR[rd]←PC+8\)</span>。</p>
+<p>也可能是<code>D_Condition==1</code>，时将  $GPR[rd]←PC+8$。</p>
 <p>对于这样的情况，在<code>Contoller</code>里的操作有：选择<code>A3</code>地址<code>rd</code>、<code>D_Jump_link=1</code>、<code>D_Is_New=1</code>、<code>D_Reg_Write=1</code>。在到<code>D_E</code>流水线寄存器前，如果<code>D_Is_New==1&amp;&amp;D_Condition == 0</code>，就让<code>A3=5'b0</code>，等价于<code>D_Reg_Write置0</code>。</p>
 <figure class="highlight verilog"><table><tr><td class="code"><pre><span class="line"><span class="keyword">wire</span> [<span class="number">4</span>:<span class="number">0</span>] D_A3_ch = (D_Is_New==<span class="number">1</span>&amp;&amp;D_Condition == <span class="number">0</span>)?<span class="number">5&#x27;d0</span>:D_A3;</span><br></pre></td></tr></table></figure>
 <p>Tips：下面这种写法是有逻辑问题的，注意辨析<code>wire [4:0] D_A3_ch = (D_Is_New==1&amp;&amp;D_Condition == 1)?D_A3:5'd0;</code></p>
-</blockquote></li>
-<li><p>改<code>D_CMP</code>模块的输出，当<code>D_Is_New</code>且<code>满足条件</code>时<code>D_Condition=1</code></p>
+</blockquote>
+</li>
+<li>
+<p>改<code>D_CMP</code>模块的输出，当<code>D_Is_New</code>且<code>满足条件</code>时<code>D_Condition=1</code></p>
 <blockquote>
 <p>也就是说<code>D_Condition==1</code>中蕴含了<code>D_Is_New==1</code>的条件。但是要注意，<code>D_Condition==0</code>时，不包含<code>D_Is_New==1</code>的条件</p>
-</blockquote></li>
-<li><p>改<code>D_NPC</code>模块，当<code>D_Condition == 1</code>时跳转到<code>sign_out</code>或<code>RD1</code>等</p>
+</blockquote>
+</li>
+<li>
+<p>改<code>D_NPC</code>模块，当<code>D_Condition == 1</code>时跳转到<code>sign_out</code>或<code>RD1</code>等</p>
 <blockquote>
 <p>条件跳转，不需要将<code>D_Jump_reg=1</code>，在<code>D_NPC</code>里先特判这个条件<code>D_Is_New==1&amp;&amp;D_Condition == 1</code>就行。</p>
 <p>（无条件跳转其实也不需要将<code>D_Jump_reg=1</code>，在<code>D_NPC</code>里先特判<code>D_Is_New==1</code>就行。）</p>
-</blockquote></li>
-<li><p>当<code>D_Is_New==1&amp;&amp;D_Condition == 0</code>，清空延迟槽（当不是阻塞时<code>(Stall==0)</code>将<code>F_D_clear=1</code>）</p>
+</blockquote>
+</li>
+<li>
+<p>当<code>D_Is_New==1&amp;&amp;D_Condition == 0</code>，清空延迟槽（当不是阻塞时<code>(Stall==0)</code>将<code>F_D_clear=1</code>）</p>
 <blockquote>
 <p><code>assign F_D_clear = (D_Is_New == 1&amp;&amp;D_Condition == 0&amp;&amp;Stall==0) ? 1'b1 : 1'b0;</code></p>
-</blockquote></li>
+</blockquote>
+</li>
 </ol>
 </blockquote>
 <p>清空延迟槽：F_D_clear=1</p>
 <p><strong>在D级阻塞时，将PC、F_D暂停（<code>RegWE</code>置0），将D_E清空。</strong></p>
 <h3 id="存储指令">存储指令</h3>
 <blockquote>
-<ol type="1">
-<li><p>改<code>D_Controller</code>，加入新指令的判断<code>D_Is_New</code>和<code>regwrite等等等等</code></p></li>
-<li><p>画<code>AT表格</code>，改<code>D_Controller</code>的
-<code>forward_control</code> ，加入新指令的<code>AT</code>判断</p></li>
-<li><p>改阻塞逻辑，这里的指令大概率是在M级才会计算出要存到哪个计算器中。</p>
+<ol>
+<li>
+<p>改<code>D_Controller</code>，加入新指令的判断<code>D_Is_New</code>和<code>regwrite等等等等</code></p>
+</li>
+<li>
+<p>画<code>AT表格</code>，改<code>D_Controller</code>的 <code>forward_control</code> ，加入新指令的<code>AT</code>判断</p>
+</li>
+<li>
+<p>改阻塞逻辑，这里的指令大概率是在M级才会计算出要存到哪个计算器中。</p>
 <p>如果是在M级时，从<code>rd</code>和<code>31</code>两个地址中选一个存储（即地址时确定的），就使用下面代码中注释的部分来进行阻塞，即遇到<code>31</code>或<code>rd</code>的地址就阻塞。</p>
 <p>如果在M级得到的存储地址不确定（由DM中取出来的值决定），<code>(E_Is_New==1)&amp;&amp;(D_rs_Tuse &lt; E_Tnew)&amp;&amp;(E_RegWrite == 1) ? 1'b1 :</code>，就这样书写。只要读到的是这条新指令，就进行阻塞。</p>
-<p>有的题可能M级得到的存储地址<strong>有范围</strong>，比如下面这个例子，<strong>地址的范围是<code>0~16</code></strong>
-，判断条件改成<code>(E_Is_New==1)&amp;&amp;((D_A1&lt;=5'b10000)?1'b1:1'b0)&amp;&amp;(D_rs_Tuse &lt; E_Tnew)&amp;&amp;(E_RegWrite == 1) ? 1'b1 :</code>，全都阻塞会<code>TLE</code>
-<span class="math display">\[
-\begin{flalign}
-&amp;vaddr ← GPR[base] + sign\_extend(offset) \\
-&amp;paddr ← vaddr\&amp;0xfffffffc \\
-&amp;Word ← memory[paddr] \\
-&amp;number  ←
-Word_{31}-Word_{30}+Word_{29}-Word_{28}+...+Word_{1}-Word_{0}+16\\
-&amp;GPR[number&gt;&gt;1]←Word
-\end{flalign}
-\]</span> 另一个题：寄存器编号<strong>必为偶数</strong></p>
-<p><code>32'h3000</code>是<strong>h</strong>！</p></li>
-<li><p>改地址选择，在模块外改就可以。<strong>注意！<code>M_Is_New</code>不能少！！需要保证<code>M_Is_New==0</code>时，<code>grfindex</code>的值延用之前逻辑的值</strong></p>
+<p>有的题可能M级得到的存储地址<strong>有范围</strong>，比如下面这个例子，<strong>地址的范围是<code>0~16</code></strong> ，判断条件改成<code>(E_Is_New==1)&amp;&amp;((D_A1&lt;=5'b10000)?1'b1:1'b0)&amp;&amp;(D_rs_Tuse &lt; E_Tnew)&amp;&amp;(E_RegWrite == 1) ? 1'b1 :</code>，全都阻塞会<code>TLE</code><br>
+$$<br>
+\begin{flalign}<br>
+&amp;vaddr ← GPR[base] + sign_extend(offset) \<br>
+&amp;paddr ← vaddr&amp;0xfffffffc \<br>
+&amp;Word ← memory[paddr] \<br>
+&amp;number  ← Word_{31}-Word_{30}+Word_{29}-Word_{28}+…+Word_{1}-Word_{0}+16\<br>
+&amp;GPR[number&gt;&gt;1]←Word<br>
+\end{flalign}<br>
+$$<br>
+另一个题：寄存器编号<strong>必为偶数</strong></p>
+<p><code>32'h3000</code>是<strong>h</strong>！</p>
+</li>
+<li>
+<p>改地址选择，在模块外改就可以。<strong>注意！<code>M_Is_New</code>不能少！！需要保证<code>M_Is_New==0</code>时，<code>grfindex</code>的值延用之前逻辑的值</strong></p>
 <p>一定要考虑清楚在<code>controller</code>里给<code>M_A3</code>赋的值是谁的地址，接着，在<code>M_Is_New==1</code>的大条件下，根据<code>cond</code>的值改变<code>grfindex</code>的值</p>
-<figure class="highlight verilog"><table><tr><td class="code"><pre><span class="line"><span class="keyword">wire</span> cond =m_data_rdata[<span class="number">0</span>];<span class="comment">//m_data_rdata对应memWord</span></span><br><span class="line"><span class="keyword">wire</span> [<span class="number">4</span>:<span class="number">0</span>] grfindex = (M_Is_New)?(cond ? M_A3 : M_A1):M_A3;</span><br><span class="line"><span class="comment">//或者</span></span><br><span class="line"><span class="keyword">wire</span> [<span class="number">4</span>:<span class="number">0</span>] grfindex = (M_Is_New==<span class="number">1</span> &amp;&amp; cond==<span class="number">0</span>) ? M_A1 : M_A3;</span><br></pre></td></tr></table></figure></li>
+<figure class="highlight verilog"><table><tr><td class="code"><pre><span class="line"><span class="keyword">wire</span> cond =m_data_rdata[<span class="number">0</span>];<span class="comment">//m_data_rdata对应memWord</span></span><br><span class="line"><span class="keyword">wire</span> [<span class="number">4</span>:<span class="number">0</span>] grfindex = (M_Is_New)?(cond ? M_A3 : M_A1):M_A3;</span><br><span class="line"><span class="comment">//或者</span></span><br><span class="line"><span class="keyword">wire</span> [<span class="number">4</span>:<span class="number">0</span>] grfindex = (M_Is_New==<span class="number">1</span> &amp;&amp; cond==<span class="number">0</span>) ? M_A1 : M_A3;</span><br></pre></td></tr></table></figure>
+</li>
 </ol>
 </blockquote>
 <figure class="highlight verilog"><table><tr><td class="code"><pre><span class="line"><span class="keyword">wire</span> Stall_E_A1 = 	(D_A1 == <span class="number">0</span>) ? <span class="number">1&#x27;b0</span> :</span><br><span class="line">					<span class="comment">//(E_Is_New==1)&amp;&amp;((D_A1 == E_A3)||(D_A1 == 5&#x27;d31))&amp;&amp;(D_rs_Tuse &lt; E_Tnew)&amp;&amp;(E_RegWrite == 1) ? 1&#x27;b1 :</span></span><br><span class="line">					(D_A1 == E_A3)&amp;&amp;(D_rs_Tuse &lt; E_Tnew)&amp;&amp;(E_RegWrite == <span class="number">1</span>) ? <span class="number">1&#x27;b1</span>: <span class="number">1&#x27;b0</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">wire</span> Stall_E_A2 = 	(D_A2 == <span class="number">0</span>) ? <span class="number">1&#x27;b0</span> :</span><br><span class="line">					<span class="comment">//(E_Is_New==1)&amp;&amp;((D_A2 == E_A3)||(D_A2 == 5&#x27;d31))&amp;&amp;(D_rt_Tuse &lt; E_Tnew)&amp;&amp;(E_RegWrite == 1) ? 1&#x27;b1 :</span></span><br><span class="line">					(D_A2 == E_A3)&amp;&amp;(D_rt_Tuse &lt; E_Tnew)&amp;&amp;(E_RegWrite == <span class="number">1</span>) ? <span class="number">1&#x27;b1</span>: <span class="number">1&#x27;b0</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">wire</span> Stall_M_A1 = 	(D_A1 == <span class="number">0</span>) ? <span class="number">1&#x27;b0</span> :</span><br><span class="line">					<span class="comment">//(M_Is_New==1)&amp;&amp;((D_A1 == M_A3)||(D_A1 == 5&#x27;d31))&amp;&amp;(D_rs_Tuse &lt; M_Tnew)&amp;&amp;(M_RegWrite == 1) ? 1&#x27;b1 :</span></span><br><span class="line">					(D_A1 == M_A3)&amp;&amp;(D_rs_Tuse &lt; M_Tnew)&amp;&amp;(M_RegWrite == <span class="number">1</span>) ? <span class="number">1&#x27;b1</span>: <span class="number">1&#x27;b0</span>;</span><br><span class="line">	</span><br><span class="line"><span class="keyword">wire</span> Stall_M_A2 = 	(D_A2 == <span class="number">0</span>) ? <span class="number">1&#x27;b0</span> :</span><br><span class="line">					<span class="comment">//(M_Is_New==1)&amp;&amp;((D_A2 == M_A3)||(D_A2 == 5&#x27;d31))&amp;&amp;(D_rt_Tuse &lt; M_Tnew)&amp;&amp;(M_RegWrite == 1) ? 1&#x27;b1 :</span></span><br><span class="line">					(D_A2 == M_A3)&amp;&amp;(D_rt_Tuse &lt; M_Tnew)&amp;&amp;(M_RegWrite == <span class="number">1</span>) ? <span class="number">1&#x27;b1</span>: <span class="number">1&#x27;b0</span>;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 <h3 id="第一次课上">第一次课上</h3>
-<h4 id="t1-gtb">T1 gtb</h4>
+<h4 id="T1-gtb">T1 gtb</h4>
 <table>
-<colgroup>
-<col style="width: 23%">
-<col style="width: 9%">
-<col style="width: 9%">
-<col style="width: 15%">
-<col style="width: 18%">
-<col style="width: 23%">
-</colgroup>
 <thead>
-<tr class="header">
-<th style="text-align: left;">31……26</th>
-<th style="text-align: left;">25……21</th>
-<th style="text-align: left;">20……16</th>
-<th style="text-align: left;">15......11</th>
-<th style="text-align: left;">10......6</th>
-<th style="text-align: left;">5……0</th>
+<tr>
+<th style="text-align:left">31……26</th>
+<th style="text-align:left">25……21</th>
+<th style="text-align:left">20……16</th>
+<th style="text-align:left">15…11</th>
+<th style="text-align:left">10…6</th>
+<th style="text-align:left">5……0</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td style="text-align: left;">op <br>000000</td>
-<td style="text-align: left;">rs</td>
-<td style="text-align: left;">rt</td>
-<td style="text-align: left;">rd</td>
-<td style="text-align: left;">0<br>00000</td>
-<td style="text-align: left;">gtb<br>111010</td>
+<tr>
+<td style="text-align:left">op <br>000000</td>
+<td style="text-align:left">rs</td>
+<td style="text-align:left">rt</td>
+<td style="text-align:left">rd</td>
+<td style="text-align:left">0<br>00000</td>
+<td style="text-align:left">gtb<br>111010</td>
 </tr>
 </tbody>
 </table>
 <p><strong>题目描述：</strong></p>
 <p>向<code>GPR[rd]</code>中写入<code>GPR[rs]</code>中比<code>GPR[rt]</code>大的位的个数</p>
 <p><strong>操作：</strong></p>
-<p><span class="math display">\[
-\begin{align}
-&amp;count ← 0 \\
-&amp;\qquad if\quad GPR[rs]_i=1\ \&amp;\ GPR[rt]_i=0\quad then\\
-&amp;\qquad \qquad count++\\
-&amp;GPR[rd]←count
-\end{align}
-\]</span></p>
-<h4 id="t2-jalrr">T2 jalrr</h4>
+<p>$$<br>
+\begin{align}<br>
+&amp;count ← 0 \<br>
+&amp;\qquad if\quad GPR[rs]_i=1\ &amp;\ GPR[rt]_i=0\quad then\<br>
+&amp;\qquad \qquad count++\<br>
+&amp;GPR[rd]←count<br>
+\end{align}<br>
+$$</p>
+<h4 id="T2-jalrr">T2 jalrr</h4>
 <table>
-<colgroup>
-<col style="width: 20%">
-<col style="width: 8%">
-<col style="width: 16%">
-<col style="width: 13%">
-<col style="width: 16%">
-<col style="width: 23%">
-</colgroup>
 <thead>
-<tr class="header">
-<th style="text-align: left;">31……26</th>
-<th style="text-align: left;">25……21</th>
-<th style="text-align: left;">20……16</th>
-<th style="text-align: left;">15......11</th>
-<th style="text-align: left;">10......6</th>
-<th style="text-align: left;">5……0</th>
+<tr>
+<th style="text-align:left">31……26</th>
+<th style="text-align:left">25……21</th>
+<th style="text-align:left">20……16</th>
+<th style="text-align:left">15…11</th>
+<th style="text-align:left">10…6</th>
+<th style="text-align:left">5……0</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td style="text-align: left;">op <br>000000</td>
-<td style="text-align: left;">rs</td>
-<td style="text-align: left;">0<br>00000</td>
-<td style="text-align: left;">rd</td>
-<td style="text-align: left;">0<br>00000</td>
-<td style="text-align: left;">jalrr<br>111011</td>
+<tr>
+<td style="text-align:left">op <br>000000</td>
+<td style="text-align:left">rs</td>
+<td style="text-align:left">0<br>00000</td>
+<td style="text-align:left">rd</td>
+<td style="text-align:left">0<br>00000</td>
+<td style="text-align:left">jalrr<br>111011</td>
 </tr>
 </tbody>
 </table>
 <p><strong>题目描述：</strong></p>
 <p>类似于<code>jal</code>，增加了跳转并连接的条件。当<code>rs</code>不等于<code>rd</code>时，进行与<code>jal</code>指令相同的操作</p>
-<p><strong>操作：</strong> <span class="math display">\[
-\begin{flalign}
-&amp;I：\\
-&amp;\qquad if\quad rs\neq rd  \quad then\\
-&amp;\qquad \qquad GPR[rd] ← PC+8\\
-&amp;\qquad endif\\
-&amp;I+1:\\
-&amp;\qquad if\quad rs\neq rd \quad then\\
-&amp;\qquad \qquad PC ← GPR[rs]\\
-&amp;\qquad endif
-\end{flalign}
-\]</span></p>
-<h4 id="t3-lwtkr">T3 lwtkr</h4>
+<p><strong>操作：</strong><br>
+$$<br>
+\begin{flalign}<br>
+&amp;I：\<br>
+&amp;\qquad if\quad rs\neq rd  \quad then\<br>
+&amp;\qquad \qquad GPR[rd] ← PC+8\<br>
+&amp;\qquad endif\<br>
+&amp;I+1:\<br>
+&amp;\qquad if\quad rs\neq rd \quad then\<br>
+&amp;\qquad \qquad PC ← GPR[rs]\<br>
+&amp;\qquad endif<br>
+\end{flalign}<br>
+$$</p>
+<h4 id="T3-lwtkr">T3 lwtkr</h4>
 <table>
 <thead>
-<tr class="header">
+<tr>
 <th>31……26</th>
 <th>25……21</th>
 <th>20……16</th>
@@ -589,7 +551,7 @@ Word_{31}-Word_{30}+Word_{29}-Word_{28}+...+Word_{1}-Word_{0}+16\\
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td>op <br>111101</td>
 <td>base</td>
 <td>rt</td>
@@ -599,47 +561,40 @@ Word_{31}-Word_{30}+Word_{29}-Word_{28}+...+Word_{1}-Word_{0}+16\\
 </table>
 <p><strong>题目描述：</strong></p>
 <p>将访存结果与<code>0x80000000</code>比较，若访存结果大于<code>0x80000000</code>，则存入<code>k0</code>，否则，存入<code>k1</code></p>
-<p><strong>操作：</strong> <span class="math display">\[
-\begin{flalign}
-&amp;paddr ← GPR[base] + sign\_extend(offset) \\
-&amp;text ← memory[paddr] \\
-&amp;if\quad text&lt;0x80000000\quad then\\
-&amp;\qquad GPR[k0]←text\\
-&amp;else\\
-&amp;\qquad GPR[k1]←text\\
-&amp;endif
-\end{flalign}
-\]</span></p>
+<p><strong>操作：</strong><br>
+$$<br>
+\begin{flalign}<br>
+&amp;paddr ← GPR[base] + sign_extend(offset) \<br>
+&amp;text ← memory[paddr] \<br>
+&amp;if\quad text&lt;0x80000000\quad then\<br>
+&amp;\qquad GPR[k0]←text\<br>
+&amp;else\<br>
+&amp;\qquad GPR[k1]←text\<br>
+&amp;endif<br>
+\end{flalign}<br>
+$$</p>
 <h3 id="第二次课上">第二次课上</h3>
-<h4 id="t1-swc">T1 swc</h4>
+<h4 id="T1-swc">T1 swc</h4>
 <p><strong>Shift Word Sircular</strong></p>
 <table>
-<colgroup>
-<col style="width: 23%">
-<col style="width: 9%">
-<col style="width: 9%">
-<col style="width: 15%">
-<col style="width: 18%">
-<col style="width: 23%">
-</colgroup>
 <thead>
-<tr class="header">
-<th style="text-align: left;">31……26</th>
-<th style="text-align: left;">25……21</th>
-<th style="text-align: left;">20……16</th>
-<th style="text-align: left;">15......11</th>
-<th style="text-align: left;">10......6</th>
-<th style="text-align: left;">5……0</th>
+<tr>
+<th style="text-align:left">31……26</th>
+<th style="text-align:left">25……21</th>
+<th style="text-align:left">20……16</th>
+<th style="text-align:left">15…11</th>
+<th style="text-align:left">10…6</th>
+<th style="text-align:left">5……0</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td style="text-align: left;">op <br>101010</td>
-<td style="text-align: left;">rs</td>
-<td style="text-align: left;">rt</td>
-<td style="text-align: left;">rd</td>
-<td style="text-align: left;">0<br>00000</td>
-<td style="text-align: left;">swc<br>101110</td>
+<tr>
+<td style="text-align:left">op <br>101010</td>
+<td style="text-align:left">rs</td>
+<td style="text-align:left">rt</td>
+<td style="text-align:left">rd</td>
+<td style="text-align:left">0<br>00000</td>
+<td style="text-align:left">swc<br>101110</td>
 </tr>
 </tbody>
 </table>
@@ -647,23 +602,23 @@ Word_{31}-Word_{30}+Word_{29}-Word_{28}+...+Word_{1}-Word_{0}+16\\
 <p>当<code>GPR[rt]</code>中为偶数时，向<code>GPR[rd]</code>中写入<code>GPR[rs]</code>向右循环移位<code>GPR[rt]</code>位后的数，</p>
 <p>当<code>GPR[rt]</code>中为奇数时，向<code>GPR[rd]</code>中写入<code>GPR[rs]</code>向左循环移位<code>GPR[rt]</code>位后的数。</p>
 <p><strong>操作：</strong></p>
-<p><span class="math display">\[
-\begin{align}
-&amp;s ← GPR[rt]_{4...0} \\
-&amp;if\ s=0^5\ then\\
-&amp;\qquad GPR[rd]←GPR[rs]\\
-&amp;else \ if\ \ GPR[rt]_0=1\\
-&amp;\qquad GPR[rd]←GPR[rs]_{(31-s)...0}||GPR[rs]_{31...(32-s)} \\
-&amp;else \ if\ \ GPR[rt]_0=0\\
-&amp;\qquad GPR[rd]←GPR[rs]_{(31-s)...0}||GPR[rs]_{31...(32-s)} \\
-&amp;endif
-\end{align}
-\]</span></p>
-<h4 id="t2-bpnal">T2 bpnal</h4>
+<p>$$<br>
+\begin{align}<br>
+&amp;s ← GPR[rt]<em>{4…0} \<br>
+&amp;if\ s=0^5\ then\<br>
+&amp;\qquad GPR[rd]←GPR[rs]\<br>
+&amp;else \ if\ \ GPR[rt]<em>0=1\<br>
+&amp;\qquad GPR[rd]←GPR[rs]</em>{(31-s)…0}||GPR[rs]</em>{31…(32-s)} \<br>
+&amp;else \ if\ \ GPR[rt]<em>0=0\<br>
+&amp;\qquad GPR[rd]←GPR[rs]</em>{(31-s)…0}||GPR[rs]_{31…(32-s)} \<br>
+&amp;endif<br>
+\end{align}<br>
+$$</p>
+<h4 id="T2-bpnal">T2 bpnal</h4>
 <p><strong>Branch if Palindrome Number And Link</strong></p>
 <table>
 <thead>
-<tr class="header">
+<tr>
 <th>31……26</th>
 <th>25……21</th>
 <th>20……16</th>
@@ -671,7 +626,7 @@ Word_{31}-Word_{30}+Word_{29}-Word_{28}+...+Word_{1}-Word_{0}+16\\
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td>op <br>101100</td>
 <td>rs</td>
 <td>rt</td>
@@ -680,27 +635,27 @@ Word_{31}-Word_{30}+Word_{29}-Word_{28}+...+Word_{1}-Word_{0}+16\\
 </tbody>
 </table>
 <p><strong>题目描述：</strong></p>
-<p>若<code>GPR[rs]</code>在二进制下是回文数，跳转到<span class="math inline">\(PC+4+sign\_extend(offset||0^2)\)</span>并<code>link</code></p>
-<p><strong>操作：</strong> <span class="math display">\[
-\begin{flalign}
-&amp;I：\\
-&amp;\qquad Condition ←
-(GPR[rs]_{31}=GPR[rs]_{0})and...and(GPR[rs]_{16}=GPR[rs]_{15})\\
-&amp;\qquad temp← PC+4 + sign\_extend(offset||0^2) \\
-&amp;\qquad if\quad Condition :\\
-&amp;\qquad \qquad GPR[31] ← PC+8\\
-&amp;\qquad endif\\
-&amp;I+1:\\
-&amp;\qquad if\quad Condition:\\
-&amp;\qquad \qquad PC ← temp\\
-&amp;\qquad endif
-\end{flalign}
-\]</span></p>
-<h4 id="t3-lwtbi">T3 lwtbi</h4>
+<p>若<code>GPR[rs]</code>在二进制下是回文数，跳转到$PC+4+sign_extend(offset||0^2)$并<code>link</code></p>
+<p><strong>操作：</strong><br>
+$$<br>
+\begin{flalign}<br>
+&amp;I：\<br>
+&amp;\qquad Condition ← (GPR[rs]<em>{31}=GPR[rs]</em>{0})and…and(GPR[rs]<em>{16}=GPR[rs]</em>{15})\<br>
+&amp;\qquad temp← PC+4 + sign_extend(offset||0^2) \<br>
+&amp;\qquad if\quad Condition :\<br>
+&amp;\qquad \qquad GPR[31] ← PC+8\<br>
+&amp;\qquad endif\<br>
+&amp;I+1:\<br>
+&amp;\qquad if\quad Condition:\<br>
+&amp;\qquad \qquad PC ← temp\<br>
+&amp;\qquad endif<br>
+\end{flalign}<br>
+$$</p>
+<h4 id="T3-lwtbi">T3 lwtbi</h4>
 <p><strong>Load Word To Bigger Tndex</strong></p>
 <table>
 <thead>
-<tr class="header">
+<tr>
 <th>31……26</th>
 <th>25……21</th>
 <th>20……16</th>
@@ -708,7 +663,7 @@ Word_{31}-Word_{30}+Word_{29}-Word_{28}+...+Word_{1}-Word_{0}+16\\
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td>op <br>111000</td>
 <td>base</td>
 <td>rt</td>
@@ -718,15 +673,16 @@ Word_{31}-Word_{30}+Word_{29}-Word_{28}+...+Word_{1}-Word_{0}+16\\
 </table>
 <p><strong>题目描述：</strong></p>
 <p>在<code>lw</code>指令的基础上，将要写入的寄存器编号改为<code>rt</code>和访存结果前五位这两者无符号比较结果的最大值</p>
-<p><strong>操作：</strong> <span class="math display">\[
-\begin{flalign}
-&amp;vaddr ← GPR[base] + sign\_extend(offset) \\
-&amp;paddr ← vaddr_{31...2}||0^2\\
-&amp;memWord ← memory[paddr] \\
-&amp;index ← max(memWord_{31...27},\ rt)\\
-&amp;GPR[index] ←memWord
-\end{flalign}
-\]</span></p>
+<p><strong>操作：</strong><br>
+$$<br>
+\begin{flalign}<br>
+&amp;vaddr ← GPR[base] + sign_extend(offset) \<br>
+&amp;paddr ← vaddr_{31…2}||0^2\<br>
+&amp;memWord ← memory[paddr] \<br>
+&amp;index ← max(memWord_{31…27},\ rt)\<br>
+&amp;GPR[index] ←memWord<br>
+\end{flalign}<br>
+$$</p>
 <blockquote>
 <p>Tips：每个人的CPU实现方式不同，扩展指令实现方式也不同，我的错误只是给大家提供一些参考</p>
 <p>这个题第一遍交的时候wa了两个点，是转发模块出了问题，我的转发模块写的转发条件没有<code>M_Tnew</code>和<code>W_Tnew</code>这两个条件。</p>
@@ -734,7 +690,7 @@ Word_{31}-Word_{30}+Word_{29}-Word_{28}+...+Word_{1}-Word_{0}+16\\
 <p>但是课上这个指令在中间改变了<code>A3</code>的地址，可能在M转发到<code>rt</code>的地址里去，在W级又存入了<code>memWord_31...27</code>的地址，导致<code>rt</code>获得了错误的值，却没有被覆盖。我在课上采取的操作是，给转发模块<code>M_A3</code>的信号接上<code>M_A3_ch（改变后的地址）</code>，看起来不是特别规矩的方法，但可以成功解决这个问题</p>
 <figure class="highlight verilog"><table><tr><td class="code"><pre><span class="line"><span class="comment">//我的转发模块</span></span><br><span class="line"><span class="keyword">assign</span> D_RD1_FW = 	(D_A1use == <span class="number">1&#x27;b0</span>) ? D_RD1 :</span><br><span class="line">					(D_A1 == <span class="number">5&#x27;b0</span>) ? <span class="number">32&#x27;h0000_0000</span> :</span><br><span class="line">					(D_A1 == M_A3)&amp;&amp;(M_RegWrite) ? M_ALU_Result :</span><br><span class="line">					(D_A1 == W_A3)&amp;&amp;(W_RegWrite)? W_RegData : D_RD1 ;</span><br></pre></td></tr></table></figure>
 </blockquote>
-</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://lamby-yang.github.io">LambYang</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://lamby-yang.github.io/2024/03/03/CO-P5-%E6%B5%81%E6%B0%B4%E7%BA%BFCPU%E8%AE%BE%E8%AE%A1/">https://lamby-yang.github.io/2024/03/03/CO-P5-%E6%B5%81%E6%B0%B4%E7%BA%BFCPU%E8%AE%BE%E8%AE%A1/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://lamby-yang.github.io" target="_blank">LambYang's Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="https://s2.loli.net/2024/01/31/7nCiOMNaZv1IQxl.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2024/03/03/CO-P6-%E6%B5%81%E6%B0%B4%E7%BA%BFCPU%E5%8A%9F%E8%83%BD%E6%89%A9%E5%B1%95/" title="CO | P6_流水线CPU功能扩展"><img class="cover" src="https://s2.loli.net/2024/01/31/P7V1MryqcCTbkRN.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">CO | P6_流水线CPU功能扩展</div></div></a></div><div class="next-post pull-right"><a href="/2024/03/03/CO-P4-%E5%8D%95%E5%91%A8%E6%9C%9FCPU%E8%AE%BE%E8%AE%A1-Verilog%E5%AE%9E%E7%8E%B0/" title="CO | P4_单周期CPU设计_Verilog实现"><img class="cover" src="https://s2.loli.net/2024/01/31/7nCiOMNaZv1IQxl.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">CO | P4_单周期CPU设计_Verilog实现</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://s2.loli.net/2024/01/30/nmgXWGCZhYzcVLP.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">LambYang</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">11</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/lamby-yang"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/lamby-yang" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E6%AE%B5%E5%BC%8F%E6%8C%87%E4%BB%A4%E6%B5%81%E6%B0%B4%E7%BA%BF"><span class="toc-number">1.</span> <span class="toc-text">五段式指令流水线</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A8%A1%E5%9D%97%E8%AE%BE%E8%AE%A1"><span class="toc-number">2.</span> <span class="toc-text">模块设计</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%93%E6%9E%84%E8%AE%BE%E8%AE%A1"><span class="toc-number">2.1.</span> <span class="toc-text">结构设计</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#controller"><span class="toc-number">2.2.</span> <span class="toc-text">Controller</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#forwarding%E8%BD%AC%E5%8F%91%E6%A8%A1%E5%9D%97"><span class="toc-number">2.3.</span> <span class="toc-text">Forwarding（转发模块）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AF%84%E5%AD%98%E5%99%A8%E5%A0%86%E5%86%85%E9%83%A8%E8%BD%AC%E5%8F%91%E5%AE%9E%E7%8E%B0"><span class="toc-number">2.3.1.</span> <span class="toc-text">寄存器堆内部转发实现</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B6%E4%BB%96%E7%9A%84%E8%BD%AC%E5%8F%91%E6%A8%A1%E5%9D%97"><span class="toc-number">2.3.2.</span> <span class="toc-text">其他的转发模块</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#tuse-%E5%92%8C-tnew-%E7%9A%84%E5%88%86%E6%9E%90"><span class="toc-number">2.3.3.</span> <span class="toc-text">Tuse 和 Tnew 的分析</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%98%BB%E5%A1%9E%E6%A8%A1%E5%9D%97"><span class="toc-number">2.4.</span> <span class="toc-text">阻塞模块</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B5%8B%E8%AF%95%E6%8C%87%E4%BB%A4"><span class="toc-number">3.</span> <span class="toc-text">测试指令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%BE%E4%B8%8A"><span class="toc-number">4.</span> <span class="toc-text">课上</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0%E6%8C%87%E4%BB%A4"><span class="toc-number">4.1.</span> <span class="toc-text">添加指令</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AE%A1%E7%AE%97%E6%8C%87%E4%BB%A4"><span class="toc-number">4.1.1.</span> <span class="toc-text">计算指令</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B7%B3%E8%BD%AC%E6%8C%87%E4%BB%A4"><span class="toc-number">4.2.</span> <span class="toc-text">跳转指令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%98%E5%82%A8%E6%8C%87%E4%BB%A4"><span class="toc-number">4.3.</span> <span class="toc-text">存储指令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E6%AC%A1%E8%AF%BE%E4%B8%8A"><span class="toc-number">4.4.</span> <span class="toc-text">第一次课上</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#t1-gtb"><span class="toc-number">4.4.1.</span> <span class="toc-text">T1 gtb</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#t2-jalrr"><span class="toc-number">4.4.2.</span> <span class="toc-text">T2 jalrr</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#t3-lwtkr"><span class="toc-number">4.4.3.</span> <span class="toc-text">T3 lwtkr</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E6%AC%A1%E8%AF%BE%E4%B8%8A"><span class="toc-number">4.5.</span> <span class="toc-text">第二次课上</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#t1-swc"><span class="toc-number">4.5.1.</span> <span class="toc-text">T1 swc</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#t2-bpnal"><span class="toc-number">4.5.2.</span> <span class="toc-text">T2 bpnal</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#t3-lwtbi"><span class="toc-number">4.5.3.</span> <span class="toc-text">T3 lwtbi</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2024/03/24/BUAA-OS-VSCode%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/" title="BUAA-OS-VSCode开发环境配置"><img src="https://s2.loli.net/2024/01/31/7nCiOMNaZv1IQxl.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="BUAA-OS-VSCode开发环境配置"/></a><div class="content"><a class="title" href="/2024/03/24/BUAA-OS-VSCode%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/" title="BUAA-OS-VSCode开发环境配置">BUAA-OS-VSCode开发环境配置</a><time datetime="2024-03-23T18:10:23.000Z" title="发表于 2024-03-24 02:10:23">2024-03-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/03/23/OO-%E7%AC%AC%E4%B8%80%E5%8D%95%E5%85%83%E6%80%BB%E7%BB%93/" title="OO | Unit1"><img src="https://s2.loli.net/2024/01/31/7nCiOMNaZv1IQxl.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="OO | Unit1"/></a><div class="content"><a class="title" href="/2024/03/23/OO-%E7%AC%AC%E4%B8%80%E5%8D%95%E5%85%83%E6%80%BB%E7%BB%93/" title="OO | Unit1">OO | Unit1</a><time datetime="2024-03-23T07:16:49.000Z" title="发表于 2024-03-23 15:16:49">2024-03-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/03/03/CO-P7-%E6%B5%81%E6%B0%B4%E7%BA%BFCPU%E4%B8%AD%E6%96%AD%E5%BC%82%E5%B8%B8%E5%93%8D%E5%BA%94/" title="CO | P7_流水线CPU中断异常响应"><img src="https://s2.loli.net/2024/01/31/7nCiOMNaZv1IQxl.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="CO | P7_流水线CPU中断异常响应"/></a><div class="content"><a class="title" href="/2024/03/03/CO-P7-%E6%B5%81%E6%B0%B4%E7%BA%BFCPU%E4%B8%AD%E6%96%AD%E5%BC%82%E5%B8%B8%E5%93%8D%E5%BA%94/" title="CO | P7_流水线CPU中断异常响应">CO | P7_流水线CPU中断异常响应</a><time datetime="2024-03-03T08:07:28.000Z" title="发表于 2024-03-03 16:07:28">2024-03-03</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/03/03/CO-P6-%E6%B5%81%E6%B0%B4%E7%BA%BFCPU%E5%8A%9F%E8%83%BD%E6%89%A9%E5%B1%95/" title="CO | P6_流水线CPU功能扩展"><img src="https://s2.loli.net/2024/01/31/P7V1MryqcCTbkRN.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="CO | P6_流水线CPU功能扩展"/></a><div class="content"><a class="title" href="/2024/03/03/CO-P6-%E6%B5%81%E6%B0%B4%E7%BA%BFCPU%E5%8A%9F%E8%83%BD%E6%89%A9%E5%B1%95/" title="CO | P6_流水线CPU功能扩展">CO | P6_流水线CPU功能扩展</a><time datetime="2024-03-03T08:06:31.000Z" title="发表于 2024-03-03 16:06:31">2024-03-03</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/03/03/CO-P5-%E6%B5%81%E6%B0%B4%E7%BA%BFCPU%E8%AE%BE%E8%AE%A1/" title="CO | P5_流水线CPU设计"><img src="https://s2.loli.net/2024/01/31/7nCiOMNaZv1IQxl.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="CO | P5_流水线CPU设计"/></a><div class="content"><a class="title" href="/2024/03/03/CO-P5-%E6%B5%81%E6%B0%B4%E7%BA%BFCPU%E8%AE%BE%E8%AE%A1/" title="CO | P5_流水线CPU设计">CO | P5_流水线CPU设计</a><time datetime="2024-03-03T08:06:07.000Z" title="发表于 2024-03-03 16:06:07">2024-03-03</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2023 - 2024 By LambYang</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">嘿！是小羊的博客！！</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"><script>if (!window.MathJax) {
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://lamby-yang.github.io">LambYang</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://lamby-yang.github.io/2024/03/03/CO-P5-%E6%B5%81%E6%B0%B4%E7%BA%BFCPU%E8%AE%BE%E8%AE%A1/">https://lamby-yang.github.io/2024/03/03/CO-P5-%E6%B5%81%E6%B0%B4%E7%BA%BFCPU%E8%AE%BE%E8%AE%A1/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://lamby-yang.github.io" target="_blank">LambYang's Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="https://s2.loli.net/2024/01/31/P7V1MryqcCTbkRN.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2024/03/03/CO-P6-%E6%B5%81%E6%B0%B4%E7%BA%BFCPU%E5%8A%9F%E8%83%BD%E6%89%A9%E5%B1%95/" title="CO | P6_流水线CPU功能扩展"><img class="cover" src="https://s2.loli.net/2024/01/31/7nCiOMNaZv1IQxl.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">CO | P6_流水线CPU功能扩展</div></div></a></div><div class="next-post pull-right"><a href="/2024/03/03/CO-P4-%E5%8D%95%E5%91%A8%E6%9C%9FCPU%E8%AE%BE%E8%AE%A1-Verilog%E5%AE%9E%E7%8E%B0/" title="CO | P4_单周期CPU设计_Verilog实现"><img class="cover" src="https://s2.loli.net/2024/01/31/wW7A1cKSo6v5xGa.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">CO | P4_单周期CPU设计_Verilog实现</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://s2.loli.net/2024/01/30/nmgXWGCZhYzcVLP.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">LambYang</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">11</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/lamby-yang"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/lamby-yang" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E6%AE%B5%E5%BC%8F%E6%8C%87%E4%BB%A4%E6%B5%81%E6%B0%B4%E7%BA%BF"><span class="toc-number">1.</span> <span class="toc-text">五段式指令流水线</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A8%A1%E5%9D%97%E8%AE%BE%E8%AE%A1"><span class="toc-number">2.</span> <span class="toc-text">模块设计</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%93%E6%9E%84%E8%AE%BE%E8%AE%A1"><span class="toc-number">2.1.</span> <span class="toc-text">结构设计</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Controller"><span class="toc-number">2.2.</span> <span class="toc-text">Controller</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Forwarding%EF%BC%88%E8%BD%AC%E5%8F%91%E6%A8%A1%E5%9D%97%EF%BC%89"><span class="toc-number">2.3.</span> <span class="toc-text">Forwarding（转发模块）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AF%84%E5%AD%98%E5%99%A8%E5%A0%86%E5%86%85%E9%83%A8%E8%BD%AC%E5%8F%91%E5%AE%9E%E7%8E%B0"><span class="toc-number">2.3.1.</span> <span class="toc-text">寄存器堆内部转发实现</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B6%E4%BB%96%E7%9A%84%E8%BD%AC%E5%8F%91%E6%A8%A1%E5%9D%97"><span class="toc-number">2.3.2.</span> <span class="toc-text">其他的转发模块</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Tuse-%E5%92%8C-Tnew-%E7%9A%84%E5%88%86%E6%9E%90"><span class="toc-number">2.3.3.</span> <span class="toc-text">Tuse 和 Tnew 的分析</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%98%BB%E5%A1%9E%E6%A8%A1%E5%9D%97"><span class="toc-number">2.4.</span> <span class="toc-text">阻塞模块</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B5%8B%E8%AF%95%E6%8C%87%E4%BB%A4"><span class="toc-number">3.</span> <span class="toc-text">测试指令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%BE%E4%B8%8A"><span class="toc-number">4.</span> <span class="toc-text">课上</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0%E6%8C%87%E4%BB%A4"><span class="toc-number">4.1.</span> <span class="toc-text">添加指令</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AE%A1%E7%AE%97%E6%8C%87%E4%BB%A4"><span class="toc-number">4.1.1.</span> <span class="toc-text">计算指令</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B7%B3%E8%BD%AC%E6%8C%87%E4%BB%A4"><span class="toc-number">4.2.</span> <span class="toc-text">跳转指令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%98%E5%82%A8%E6%8C%87%E4%BB%A4"><span class="toc-number">4.3.</span> <span class="toc-text">存储指令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E6%AC%A1%E8%AF%BE%E4%B8%8A"><span class="toc-number">4.4.</span> <span class="toc-text">第一次课上</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#T1-gtb"><span class="toc-number">4.4.1.</span> <span class="toc-text">T1 gtb</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#T2-jalrr"><span class="toc-number">4.4.2.</span> <span class="toc-text">T2 jalrr</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#T3-lwtkr"><span class="toc-number">4.4.3.</span> <span class="toc-text">T3 lwtkr</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E6%AC%A1%E8%AF%BE%E4%B8%8A"><span class="toc-number">4.5.</span> <span class="toc-text">第二次课上</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#T1-swc"><span class="toc-number">4.5.1.</span> <span class="toc-text">T1 swc</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#T2-bpnal"><span class="toc-number">4.5.2.</span> <span class="toc-text">T2 bpnal</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#T3-lwtbi"><span class="toc-number">4.5.3.</span> <span class="toc-text">T3 lwtbi</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2024/03/24/BUAA-OS-VSCode%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/" title="BUAA-OS-VSCode开发环境配置"><img src="https://s2.loli.net/2024/01/31/4akh7yHM59pbGnj.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="BUAA-OS-VSCode开发环境配置"/></a><div class="content"><a class="title" href="/2024/03/24/BUAA-OS-VSCode%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/" title="BUAA-OS-VSCode开发环境配置">BUAA-OS-VSCode开发环境配置</a><time datetime="2024-03-23T18:10:23.000Z" title="发表于 2024-03-24 02:10:23">2024-03-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/03/23/OO-%E7%AC%AC%E4%B8%80%E5%8D%95%E5%85%83%E6%80%BB%E7%BB%93/" title="OO | Unit1"><img src="https://s2.loli.net/2024/01/31/4akh7yHM59pbGnj.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="OO | Unit1"/></a><div class="content"><a class="title" href="/2024/03/23/OO-%E7%AC%AC%E4%B8%80%E5%8D%95%E5%85%83%E6%80%BB%E7%BB%93/" title="OO | Unit1">OO | Unit1</a><time datetime="2024-03-23T07:16:49.000Z" title="发表于 2024-03-23 15:16:49">2024-03-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/03/03/CO-P7-%E6%B5%81%E6%B0%B4%E7%BA%BFCPU%E4%B8%AD%E6%96%AD%E5%BC%82%E5%B8%B8%E5%93%8D%E5%BA%94/" title="CO | P7_流水线CPU中断异常响应"><img src="https://s2.loli.net/2024/01/31/4akh7yHM59pbGnj.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="CO | P7_流水线CPU中断异常响应"/></a><div class="content"><a class="title" href="/2024/03/03/CO-P7-%E6%B5%81%E6%B0%B4%E7%BA%BFCPU%E4%B8%AD%E6%96%AD%E5%BC%82%E5%B8%B8%E5%93%8D%E5%BA%94/" title="CO | P7_流水线CPU中断异常响应">CO | P7_流水线CPU中断异常响应</a><time datetime="2024-03-03T08:07:28.000Z" title="发表于 2024-03-03 16:07:28">2024-03-03</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/03/03/CO-P6-%E6%B5%81%E6%B0%B4%E7%BA%BFCPU%E5%8A%9F%E8%83%BD%E6%89%A9%E5%B1%95/" title="CO | P6_流水线CPU功能扩展"><img src="https://s2.loli.net/2024/01/31/7nCiOMNaZv1IQxl.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="CO | P6_流水线CPU功能扩展"/></a><div class="content"><a class="title" href="/2024/03/03/CO-P6-%E6%B5%81%E6%B0%B4%E7%BA%BFCPU%E5%8A%9F%E8%83%BD%E6%89%A9%E5%B1%95/" title="CO | P6_流水线CPU功能扩展">CO | P6_流水线CPU功能扩展</a><time datetime="2024-03-03T08:06:31.000Z" title="发表于 2024-03-03 16:06:31">2024-03-03</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/03/03/CO-P5-%E6%B5%81%E6%B0%B4%E7%BA%BFCPU%E8%AE%BE%E8%AE%A1/" title="CO | P5_流水线CPU设计"><img src="https://s2.loli.net/2024/01/31/P7V1MryqcCTbkRN.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="CO | P5_流水线CPU设计"/></a><div class="content"><a class="title" href="/2024/03/03/CO-P5-%E6%B5%81%E6%B0%B4%E7%BA%BFCPU%E8%AE%BE%E8%AE%A1/" title="CO | P5_流水线CPU设计">CO | P5_流水线CPU设计</a><time datetime="2024-03-03T08:06:07.000Z" title="发表于 2024-03-03 16:06:07">2024-03-03</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2023 - 2024 By LambYang</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">嘿！是小羊的博客！！</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"><script>if (!window.MathJax) {
   window.MathJax = {
     tex: {
       inlineMath: [['$', '$'], ['\\(', '\\)']],
@@ -769,4 +725,4 @@ Word_{31}-Word_{30}+Word_{29}-Word_{28}+...+Word_{1}-Word_{0}+16\\
   MathJax.startup.document.state(0)
   MathJax.texReset()
   MathJax.typesetPromise()
-}</script></div><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-nest.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
+}</script></div><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-nest.min.js"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-heart.min.js" async="async" mobile="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
